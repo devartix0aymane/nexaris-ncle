@@ -84,8 +84,9 @@ NEXARIS/
 ### Windows
 1. Clone the repository:
    ```
-   git clone https://github.com/devartix0aymane/NEXARIS.git
-   cd NEXARIS
+   git clone https://github.com/devartix0aymane/nexaris-ncle.git
+   
+   cd nexaris-ncle
    ```
 2. Run the application using the provided batch script:
    ```
@@ -99,7 +100,7 @@ NEXARIS/
 ### Linux/macOS
 1. Clone the repository:
    ```
-   git clone https://github.com/devartix0aymane/NEXARIS.git
+   git clone https://github.com/devartix0aymane/nexaris-ncle.git
    cd NEXARIS
    ```
 2. Make the shell script executable:
@@ -118,7 +119,7 @@ NEXARIS/
 ### Manual Installation
 1. Clone the repository:
    ```
-   git clone https://github.com/devartix0aymane/NEXARIS.git
+   git clone https://github.com/devartix0aymane/nexaris-ncle.git
    cd NEXARIS
    ```
 2. Create and activate a virtual environment:
