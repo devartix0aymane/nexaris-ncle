@@ -1,0 +1,222 @@
+{
+    "name": "Cybersecurity Knowledge Questions",
+    "description": "A set of cybersecurity-focused questions for cognitive load testing in security contexts",
+    "difficulty": "hard",
+    "questions": [
+        {
+            "id": "cs1",
+            "text": "Which of the following is NOT a common type of malware?",
+            "options": ["Virus", "Worm", "Trojan", "Firewall"],
+            "correct_answer": "Firewall",
+            "difficulty": "easy",
+            "time_limit": 10
+        },
+        {
+            "id": "cs2",
+            "text": "What does 'SSL' stand for in web security?",
+            "options": ["Secure Socket Layer", "System Security Lock", "Safe Server Login", "Server Side Language"],
+            "correct_answer": "Secure Socket Layer",
+            "difficulty": "easy",
+            "time_limit": 10
+        },
+        {
+            "id": "cs3",
+            "text": "Which of these is a common password attack method?",
+            "options": ["Phishing", "Brute Force", "SQL Injection", "Cross-site Scripting"],
+            "correct_answer": "Brute Force",
+            "difficulty": "easy",
+            "time_limit": 10
+        },
+        {
+            "id": "cs4",
+            "text": "What is the primary purpose of a firewall in network security?",
+            "options": [
+                "To monitor network traffic and block unauthorized access",
+                "To encrypt all network communications",
+                "To scan for viruses in email attachments",
+                "To create secure backups of data"
+            ],
+            "correct_answer": "To monitor network traffic and block unauthorized access",
+            "difficulty": "easy",
+            "time_limit": 15
+        },
+        {
+            "id": "cs5",
+            "text": "Which encryption standard is considered obsolete and insecure?",
+            "options": ["AES-256", "RSA-2048", "DES", "SHA-256"],
+            "correct_answer": "DES",
+            "difficulty": "medium",
+            "time_limit": 15
+        },
+        {
+            "id": "cs6",
+            "text": "What is a 'zero-day vulnerability'?",
+            "options": [
+                "A vulnerability that has existed for zero days",
+                "A vulnerability that is known to the vendor but has no patch yet",
+                "A vulnerability that is unknown to the vendor and has no patch",
+                "A vulnerability that can be exploited in zero seconds"
+            ],
+            "correct_answer": "A vulnerability that is unknown to the vendor and has no patch",
+            "difficulty": "medium",
+            "time_limit": 20
+        },
+        {
+            "id": "cs7",
+            "text": "Which of these is NOT a common network security protocol?",
+            "options": ["HTTPS", "SSH", "SFTP", "HTTP/3"],
+            "correct_answer": "HTTP/3",
+            "difficulty": "medium",
+            "time_limit": 15
+        },
+        {
+            "id": "cs8",
+            "text": "What is the purpose of a CAPTCHA?",
+            "options": [
+                "To verify the user is human",
+                "To encrypt user passwords",
+                "To scan for malware",
+                "To compress data for faster transmission"
+            ],
+            "correct_answer": "To verify the user is human",
+            "difficulty": "easy",
+            "time_limit": 10
+        },
+        {
+            "id": "cs9",
+            "text": "Which of these is a principle of the CIA triad in information security?",
+            "options": ["Confidentiality", "Certification", "Compliance", "Correction"],
+            "correct_answer": "Confidentiality",
+            "difficulty": "medium",
+            "time_limit": 15
+        },
+        {
+            "id": "cs10",
+            "text": "What is the main purpose of a VPN?",
+            "options": [
+                "To create a secure, encrypted connection over a less secure network",
+                "To scan for viruses in downloaded files",
+                "To block unwanted advertisements",
+                "To increase internet speed by compressing data"
+            ],
+            "correct_answer": "To create a secure, encrypted connection over a less secure network",
+            "difficulty": "medium",
+            "time_limit": 15
+        },
+        {
+            "id": "cs11",
+            "text": "Which of these is NOT a common method for two-factor authentication?",
+            "options": ["SMS code", "Authentication app", "Biometric verification", "IP address verification"],
+            "correct_answer": "IP address verification",
+            "difficulty": "medium",
+            "time_limit": 15
+        },
+        {
+            "id": "cs12",
+            "text": "What is a 'man-in-the-middle' attack?",
+            "options": [
+                "An attack where the attacker secretly relays and possibly alters communications between two parties",
+                "An attack that targets middle management in organizations",
+                "An attack that occurs at the middle layer of a network stack",
+                "An attack that happens at midday when network traffic is highest"
+            ],
+            "correct_answer": "An attack where the attacker secretly relays and possibly alters communications between two parties",
+            "difficulty": "medium",
+            "time_limit": 20
+        },
+        {
+            "id": "cs13",
+            "text": "Which of these hash functions is considered the most secure?",
+            "options": ["MD5", "SHA-1", "SHA-256", "NTLM"],
+            "correct_answer": "SHA-256",
+            "difficulty": "medium",
+            "time_limit": 15
+        },
+        {
+            "id": "cs14",
+            "text": "What is the primary purpose of a SIEM system?",
+            "options": [
+                "To provide real-time analysis of security alerts",
+                "To encrypt network traffic",
+                "To scan for vulnerabilities in web applications",
+                "To manage user access controls"
+            ],
+            "correct_answer": "To provide real-time analysis of security alerts",
+            "difficulty": "hard",
+            "time_limit": 20
+        },
+        {
+            "id": "cs15",
+            "text": "Which of these is NOT a common web application security vulnerability according to OWASP?",
+            "options": ["Injection", "Broken Authentication", "Memory Leaks", "Cross-Site Scripting"],
+            "correct_answer": "Memory Leaks",
+            "difficulty": "hard",
+            "time_limit": 20
+        },
+        {
+            "id": "cs16",
+            "text": "What is the difference between symmetric and asymmetric encryption?",
+            "options": [
+                "Symmetric uses one key for encryption and decryption, asymmetric uses different keys",
+                "Symmetric is faster, asymmetric is more secure",
+                "Symmetric works on text, asymmetric works on binary data",
+                "Symmetric is used for data at rest, asymmetric for data in transit"
+            ],
+            "correct_answer": "Symmetric uses one key for encryption and decryption, asymmetric uses different keys",
+            "difficulty": "hard",
+            "time_limit": 25
+        },
+        {
+            "id": "cs17",
+            "text": "Which of these is a correct description of a buffer overflow attack?",
+            "options": [
+                "When more data is put into a buffer than it can handle, causing adjacent memory to be overwritten",
+                "When a system's memory buffer is filled with too many requests, causing a denial of service",
+                "When encrypted data overflows into unencrypted memory regions",
+                "When network buffers are flooded with too much traffic"
+            ],
+            "correct_answer": "When more data is put into a buffer than it can handle, causing adjacent memory to be overwritten",
+            "difficulty": "hard",
+            "time_limit": 25
+        },
+        {
+            "id": "cs18",
+            "text": "What is the principle of least privilege in cybersecurity?",
+            "options": [
+                "Users should be given the minimum levels of access necessary to complete their job functions",
+                "Systems should use the minimum amount of resources necessary to function",
+                "Security systems should generate the minimum number of alerts possible",
+                "Organizations should implement the minimum security controls required by regulations"
+            ],
+            "correct_answer": "Users should be given the minimum levels of access necessary to complete their job functions",
+            "difficulty": "hard",
+            "time_limit": 20
+        },
+        {
+            "id": "cs19",
+            "text": "Which of these best describes a 'salted hash' in password storage?",
+            "options": [
+                "A hash function that adds random data to the password before hashing",
+                "A hash function that uses multiple iterations to slow down brute force attacks",
+                "A hash function that produces shorter output for faster verification",
+                "A hash function that works specifically with encrypted passwords"
+            ],
+            "correct_answer": "A hash function that adds random data to the password before hashing",
+            "difficulty": "hard",
+            "time_limit": 25
+        },
+        {
+            "id": "cs20",
+            "text": "What is the primary security concern with BYOD (Bring Your Own Device) policies?",
+            "options": [
+                "Lack of control over security configurations on personal devices",
+                "Increased cost of providing technical support",
+                "Compatibility issues with corporate applications",
+                "Reduced productivity due to personal use"
+            ],
+            "correct_answer": "Lack of control over security configurations on personal devices",
+            "difficulty": "hard",
+            "time_limit": 20
+        }
+    ]
+}

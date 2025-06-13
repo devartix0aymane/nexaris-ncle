@@ -1,0 +1,177 @@
+{
+    "name": "General Knowledge Questions",
+    "description": "A set of general knowledge questions for cognitive load testing",
+    "difficulty": "medium",
+    "questions": [
+        {
+            "id": "g1",
+            "text": "What is the capital of France?",
+            "options": ["Paris", "London", "Berlin", "Madrid"],
+            "correct_answer": "Paris",
+            "difficulty": "easy",
+            "time_limit": 10
+        },
+        {
+            "id": "g2",
+            "text": "Which planet is known as the Red Planet?",
+            "options": ["Venus", "Mars", "Jupiter", "Saturn"],
+            "correct_answer": "Mars",
+            "difficulty": "easy",
+            "time_limit": 10
+        },
+        {
+            "id": "g3",
+            "text": "What is the chemical symbol for gold?",
+            "options": ["Go", "Gd", "Au", "Ag"],
+            "correct_answer": "Au",
+            "difficulty": "medium",
+            "time_limit": 15
+        },
+        {
+            "id": "g4",
+            "text": "Who wrote 'Romeo and Juliet'?",
+            "options": ["Charles Dickens", "William Shakespeare", "Jane Austen", "Mark Twain"],
+            "correct_answer": "William Shakespeare",
+            "difficulty": "easy",
+            "time_limit": 10
+        },
+        {
+            "id": "g5",
+            "text": "What is the largest ocean on Earth?",
+            "options": ["Atlantic Ocean", "Indian Ocean", "Arctic Ocean", "Pacific Ocean"],
+            "correct_answer": "Pacific Ocean",
+            "difficulty": "easy",
+            "time_limit": 10
+        },
+        {
+            "id": "g6",
+            "text": "What is the square root of 144?",
+            "options": ["10", "12", "14", "16"],
+            "correct_answer": "12",
+            "difficulty": "medium",
+            "time_limit": 15
+        },
+        {
+            "id": "g7",
+            "text": "Which of these elements has the highest atomic number?",
+            "options": ["Oxygen", "Carbon", "Nitrogen", "Fluorine"],
+            "correct_answer": "Fluorine",
+            "difficulty": "hard",
+            "time_limit": 20
+        },
+        {
+            "id": "g8",
+            "text": "What is the capital of Australia?",
+            "options": ["Sydney", "Melbourne", "Canberra", "Perth"],
+            "correct_answer": "Canberra",
+            "difficulty": "medium",
+            "time_limit": 15
+        },
+        {
+            "id": "g9",
+            "text": "In which year did World War II end?",
+            "options": ["1943", "1944", "1945", "1946"],
+            "correct_answer": "1945",
+            "difficulty": "medium",
+            "time_limit": 15
+        },
+        {
+            "id": "g10",
+            "text": "What is the speed of light in vacuum (approximate)?",
+            "options": ["300,000 km/s", "150,000 km/s", "200,000 km/s", "250,000 km/s"],
+            "correct_answer": "300,000 km/s",
+            "difficulty": "medium",
+            "time_limit": 15
+        },
+        {
+            "id": "g11",
+            "text": "Which of these is NOT a primary color in the RGB color model?",
+            "options": ["Red", "Green", "Blue", "Yellow"],
+            "correct_answer": "Yellow",
+            "difficulty": "medium",
+            "time_limit": 15
+        },
+        {
+            "id": "g12",
+            "text": "What is the formula for calculating the area of a circle?",
+            "options": ["πr²", "2πr", "πd", "r²π"],
+            "correct_answer": "πr²",
+            "difficulty": "medium",
+            "time_limit": 15
+        },
+        {
+            "id": "g13",
+            "text": "Which of these countries is NOT in Europe?",
+            "options": ["Portugal", "Romania", "Turkey", "Egypt"],
+            "correct_answer": "Egypt",
+            "difficulty": "medium",
+            "time_limit": 15
+        },
+        {
+            "id": "g14",
+            "text": "What is the main component of the Earth's atmosphere?",
+            "options": ["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"],
+            "correct_answer": "Nitrogen",
+            "difficulty": "medium",
+            "time_limit": 15
+        },
+        {
+            "id": "g15",
+            "text": "Which of these is NOT a mammal?",
+            "options": ["Dolphin", "Bat", "Whale", "Penguin"],
+            "correct_answer": "Penguin",
+            "difficulty": "medium",
+            "time_limit": 15
+        },
+        {
+            "id": "g16",
+            "text": "What is the Fibonacci sequence?",
+            "options": [
+                "A sequence where each number is the sum of the two preceding ones",
+                "A sequence of prime numbers",
+                "A sequence of perfect squares",
+                "A sequence where each number is twice the previous number"
+            ],
+            "correct_answer": "A sequence where each number is the sum of the two preceding ones",
+            "difficulty": "hard",
+            "time_limit": 20
+        },
+        {
+            "id": "g17",
+            "text": "Which of these sorting algorithms has the best average time complexity?",
+            "options": ["Bubble Sort", "Quick Sort", "Insertion Sort", "Selection Sort"],
+            "correct_answer": "Quick Sort",
+            "difficulty": "hard",
+            "time_limit": 20
+        },
+        {
+            "id": "g18",
+            "text": "What is the time complexity of binary search?",
+            "options": ["O(n)", "O(n²)", "O(log n)", "O(n log n)"],
+            "correct_answer": "O(log n)",
+            "difficulty": "hard",
+            "time_limit": 20
+        },
+        {
+            "id": "g19",
+            "text": "Which of these is NOT a fundamental force in physics?",
+            "options": ["Gravity", "Electromagnetic force", "Strong nuclear force", "Centrifugal force"],
+            "correct_answer": "Centrifugal force",
+            "difficulty": "hard",
+            "time_limit": 20
+        },
+        {
+            "id": "g20",
+            "text": "What is the correct order of planets from the Sun?",
+            "options": [
+                "Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune",
+                "Mercury, Venus, Earth, Mars, Saturn, Jupiter, Uranus, Neptune",
+                "Mercury, Earth, Venus, Mars, Jupiter, Saturn, Uranus, Neptune",
+                "Mercury, Venus, Earth, Mars, Jupiter, Saturn, Neptune, Uranus"
+            ],
+            "correct_answer": "Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune",
+            "difficulty": "hard",
+            "time_limit": 20
+        }
+    ]
+}

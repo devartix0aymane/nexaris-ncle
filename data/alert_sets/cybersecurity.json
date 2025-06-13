@@ -1,0 +1,262 @@
+{
+    "name": "Advanced Cybersecurity Alerts",
+    "description": "A set of specialized cybersecurity alerts for advanced cognitive load testing",
+    "difficulty": "hard",
+    "alerts": [
+        {
+            "id": "csalert1",
+            "title": "APT Campaign Indicators Detected",
+            "description": "Multiple indicators of compromise matching APT29 campaign detected across 3 systems in R&D department",
+            "timestamp": "2023-06-15T13:42:15",
+            "severity": "critical",
+            "source": "Threat Intelligence Platform",
+            "actions": [
+                "Ignore",
+                "Isolate Affected Systems",
+                "Deploy Hunt Team",
+                "Activate Incident Response Plan"
+            ],
+            "recommended_action": "Activate Incident Response Plan",
+            "time_limit": 30,
+            "difficulty": "hard"
+        },
+        {
+            "id": "csalert2",
+            "title": "Zero-Day Vulnerability Alert",
+            "description": "Critical zero-day vulnerability CVE-2023-12345 affecting Apache Struts detected in production web servers",
+            "timestamp": "2023-06-15T09:15:33",
+            "severity": "critical",
+            "source": "Vulnerability Scanner",
+            "actions": [
+                "Ignore",
+                "Apply Virtual Patching",
+                "Take Services Offline",
+                "Implement WAF Rules"
+            ],
+            "recommended_action": "Apply Virtual Patching",
+            "time_limit": 25,
+            "difficulty": "hard"
+        },
+        {
+            "id": "csalert3",
+            "title": "DNS Tunneling Detected",
+            "description": "Suspicious DNS tunneling activity detected from workstation WS-118 to domain malicious-exfil.com",
+            "timestamp": "2023-06-15T14:22:45",
+            "severity": "high",
+            "source": "Network Security Monitor",
+            "actions": [
+                "Ignore",
+                "Block Domain",
+                "Isolate Workstation",
+                "Escalate to Forensics Team"
+            ],
+            "recommended_action": "Isolate Workstation",
+            "time_limit": 20,
+            "difficulty": "hard"
+        },
+        {
+            "id": "csalert4",
+            "title": "Insider Threat Detection",
+            "description": "User jdoe (Finance Dept) accessed 235 sensitive customer records outside normal working hours",
+            "timestamp": "2023-06-15T02:15:10",
+            "severity": "high",
+            "source": "User Behavior Analytics",
+            "actions": [
+                "Ignore",
+                "Lock Account",
+                "Monitor User",
+                "Escalate to HR and Legal"
+            ],
+            "recommended_action": "Lock Account",
+            "time_limit": 25,
+            "difficulty": "hard"
+        },
+        {
+            "id": "csalert5",
+            "title": "Supply Chain Compromise",
+            "description": "Vendor software update package for FinanceApp contains suspicious code modifications not present in vendor's digital signature",
+            "timestamp": "2023-06-15T10:33:22",
+            "severity": "critical",
+            "source": "Application Security",
+            "actions": [
+                "Ignore",
+                "Block Update",
+                "Contact Vendor",
+                "Isolate Finance Systems"
+            ],
+            "recommended_action": "Block Update",
+            "time_limit": 30,
+            "difficulty": "hard"
+        },
+        {
+            "id": "csalert6",
+            "title": "Cryptomining Activity",
+            "description": "High CPU utilization and connections to known cryptomining pools detected on database server DB-03",
+            "timestamp": "2023-06-15T16:45:33",
+            "severity": "medium",
+            "source": "Server Monitoring",
+            "actions": [
+                "Ignore",
+                "Terminate Processes",
+                "Isolate Server",
+                "Investigate Root Cause"
+            ],
+            "recommended_action": "Terminate Processes",
+            "time_limit": 20,
+            "difficulty": "medium"
+        },
+        {
+            "id": "csalert7",
+            "title": "Container Escape Attempt",
+            "description": "Potential container escape attempt detected in Kubernetes cluster - pod attempting to access host system resources",
+            "timestamp": "2023-06-15T11:12:45",
+            "severity": "critical",
+            "source": "Container Security",
+            "actions": [
+                "Ignore",
+                "Terminate Pod",
+                "Isolate Node",
+                "Escalate to Cloud Security"
+            ],
+            "recommended_action": "Terminate Pod",
+            "time_limit": 25,
+            "difficulty": "hard"
+        },
+        {
+            "id": "csalert8",
+            "title": "API Key Compromise",
+            "description": "Production AWS API key detected in public GitHub repository committed by developer msmith",
+            "timestamp": "2023-06-15T09:05:15",
+            "severity": "critical",
+            "source": "Secret Scanner",
+            "actions": [
+                "Ignore",
+                "Revoke API Key",
+                "Remove from Repository",
+                "Audit for Unauthorized Usage"
+            ],
+            "recommended_action": "Revoke API Key",
+            "time_limit": 20,
+            "difficulty": "medium"
+        },
+        {
+            "id": "csalert9",
+            "title": "DDoS Attack in Progress",
+            "description": "Volumetric DDoS attack targeting corporate website - 15Gbps traffic from botnet targeting TCP port 443",
+            "timestamp": "2023-06-15T15:33:10",
+            "severity": "high",
+            "source": "DDoS Protection",
+            "actions": [
+                "Ignore",
+                "Activate DDoS Mitigation",
+                "Contact ISP",
+                "Failover to Backup Site"
+            ],
+            "recommended_action": "Activate DDoS Mitigation",
+            "time_limit": 20,
+            "difficulty": "medium"
+        },
+        {
+            "id": "csalert10",
+            "title": "Firmware Tampering Detected",
+            "description": "UEFI firmware integrity check failed on executive laptop EX-05 - possible rootkit detected",
+            "timestamp": "2023-06-15T12:22:33",
+            "severity": "critical",
+            "source": "Endpoint Protection",
+            "actions": [
+                "Ignore",
+                "Isolate Device",
+                "Reflash Firmware",
+                "Escalate to Forensics"
+            ],
+            "recommended_action": "Isolate Device",
+            "time_limit": 25,
+            "difficulty": "hard"
+        },
+        {
+            "id": "csalert11",
+            "title": "Lateral Movement Detected",
+            "description": "Unusual lateral movement detected - service account accessing multiple servers using PsExec",
+            "timestamp": "2023-06-15T14:05:45",
+            "severity": "high",
+            "source": "EDR Platform",
+            "actions": [
+                "Ignore",
+                "Block Service Account",
+                "Isolate Affected Servers",
+                "Escalate to SOC"
+            ],
+            "recommended_action": "Block Service Account",
+            "time_limit": 25,
+            "difficulty": "hard"
+        },
+        {
+            "id": "csalert12",
+            "title": "Suspicious PowerShell Execution",
+            "description": "Obfuscated PowerShell command executed with encoded payload on HR Director's workstation",
+            "timestamp": "2023-06-15T10:45:22",
+            "severity": "high",
+            "source": "EDR Platform",
+            "actions": [
+                "Ignore",
+                "Terminate Process",
+                "Isolate Workstation",
+                "Escalate to Incident Response"
+            ],
+            "recommended_action": "Isolate Workstation",
+            "time_limit": 20,
+            "difficulty": "medium"
+        },
+        {
+            "id": "csalert13",
+            "title": "Cloud Resource Misconfiguration",
+            "description": "S3 bucket containing customer data configured with public read access - 24,000 records exposed",
+            "timestamp": "2023-06-15T08:33:15",
+            "severity": "critical",
+            "source": "Cloud Security Posture Management",
+            "actions": [
+                "Ignore",
+                "Restrict Access",
+                "Audit Data Access Logs",
+                "Notify Privacy Officer"
+            ],
+            "recommended_action": "Restrict Access",
+            "time_limit": 20,
+            "difficulty": "medium"
+        },
+        {
+            "id": "csalert14",
+            "title": "Memory-Based Malware Detected",
+            "description": "Fileless malware detected in memory of web server WEB-02 - no disk artifacts found",
+            "timestamp": "2023-06-15T17:15:33",
+            "severity": "critical",
+            "source": "Advanced Threat Protection",
+            "actions": [
+                "Ignore",
+                "Capture Memory Dump",
+                "Restart Server",
+                "Isolate Server"
+            ],
+            "recommended_action": "Capture Memory Dump",
+            "time_limit": 25,
+            "difficulty": "hard"
+        },
+        {
+            "id": "csalert15",
+            "title": "BGP Route Hijacking",
+            "description": "Potential BGP route hijacking detected - corporate IP range being advertised by unauthorized AS number",
+            "timestamp": "2023-06-15T13:05:10",
+            "severity": "critical",
+            "source": "Network Monitoring",
+            "actions": [
+                "Ignore",
+                "Contact ISP",
+                "Announce Correct Routes",
+                "Activate Backup Connections"
+            ],
+            "recommended_action": "Contact ISP",
+            "time_limit": 30,
+            "difficulty": "hard"
+        }
+    ]
+}

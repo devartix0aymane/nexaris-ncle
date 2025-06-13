@@ -1,0 +1,262 @@
+{
+    "name": "General Security Alerts",
+    "description": "A set of general security alerts for cognitive load testing",
+    "difficulty": "medium",
+    "alerts": [
+        {
+            "id": "alert1",
+            "title": "Unusual Login Attempt",
+            "description": "Multiple failed login attempts detected from IP 192.168.1.105 for user admin",
+            "timestamp": "2023-06-15T14:23:45",
+            "severity": "medium",
+            "source": "Authentication Server",
+            "actions": [
+                "Ignore",
+                "Block IP",
+                "Lock Account",
+                "Escalate to SOC"
+            ],
+            "recommended_action": "Lock Account",
+            "time_limit": 15,
+            "difficulty": "easy"
+        },
+        {
+            "id": "alert2",
+            "title": "Malware Detection",
+            "description": "Potential malware 'Trojan.GenericKD.45678' detected on workstation WS-104 in Marketing department",
+            "timestamp": "2023-06-15T15:12:33",
+            "severity": "high",
+            "source": "Endpoint Protection",
+            "actions": [
+                "Ignore",
+                "Quarantine File",
+                "Isolate System",
+                "Escalate to SOC"
+            ],
+            "recommended_action": "Isolate System",
+            "time_limit": 20,
+            "difficulty": "medium"
+        },
+        {
+            "id": "alert3",
+            "title": "Suspicious Network Traffic",
+            "description": "Unusual outbound traffic detected from server SRV-DB-01 to external IP 45.67.89.123 on port 4444",
+            "timestamp": "2023-06-15T16:45:12",
+            "severity": "critical",
+            "source": "Network IDS",
+            "actions": [
+                "Ignore",
+                "Block Traffic",
+                "Isolate Server",
+                "Escalate to SOC"
+            ],
+            "recommended_action": "Isolate Server",
+            "time_limit": 25,
+            "difficulty": "hard"
+        },
+        {
+            "id": "alert4",
+            "title": "System Update Available",
+            "description": "Critical security update KB4567890 available for 25 systems in Finance department",
+            "timestamp": "2023-06-15T09:30:00",
+            "severity": "low",
+            "source": "Patch Management",
+            "actions": [
+                "Ignore",
+                "Schedule Update",
+                "Apply Immediately",
+                "Escalate to IT"
+            ],
+            "recommended_action": "Schedule Update",
+            "time_limit": 15,
+            "difficulty": "easy"
+        },
+        {
+            "id": "alert5",
+            "title": "Unauthorized Access Attempt",
+            "description": "User jsmith attempted to access restricted file server FS-HR-01 at 14:22:45",
+            "timestamp": "2023-06-15T14:25:10",
+            "severity": "medium",
+            "source": "File Server Audit",
+            "actions": [
+                "Ignore",
+                "Contact User",
+                "Revoke Access",
+                "Escalate to HR"
+            ],
+            "recommended_action": "Contact User",
+            "time_limit": 15,
+            "difficulty": "medium"
+        },
+        {
+            "id": "alert6",
+            "title": "Firewall Rule Change",
+            "description": "Firewall rule #45 modified by user admin to allow inbound traffic on port 3389 (RDP)",
+            "timestamp": "2023-06-15T11:15:22",
+            "severity": "medium",
+            "source": "Firewall Audit",
+            "actions": [
+                "Approve",
+                "Revert Change",
+                "Request Justification",
+                "Escalate to Network Team"
+            ],
+            "recommended_action": "Request Justification",
+            "time_limit": 20,
+            "difficulty": "medium"
+        },
+        {
+            "id": "alert7",
+            "title": "Data Exfiltration Attempt",
+            "description": "Large file transfer (2.3GB) detected from workstation WS-205 to external cloud storage service",
+            "timestamp": "2023-06-15T16:05:33",
+            "severity": "high",
+            "source": "DLP System",
+            "actions": [
+                "Ignore",
+                "Block Transfer",
+                "Isolate Workstation",
+                "Escalate to SOC"
+            ],
+            "recommended_action": "Block Transfer",
+            "time_limit": 20,
+            "difficulty": "hard"
+        },
+        {
+            "id": "alert8",
+            "title": "Antivirus Signature Update Failed",
+            "description": "Antivirus signature update failed on 12 systems in Engineering department",
+            "timestamp": "2023-06-15T08:45:12",
+            "severity": "low",
+            "source": "Endpoint Protection",
+            "actions": [
+                "Ignore",
+                "Retry Update",
+                "Investigate Network Issues",
+                "Escalate to IT"
+            ],
+            "recommended_action": "Retry Update",
+            "time_limit": 15,
+            "difficulty": "easy"
+        },
+        {
+            "id": "alert9",
+            "title": "Suspicious Email Detected",
+            "description": "Phishing email with subject 'Urgent: Password Reset Required' quarantined for user ceo@company.com",
+            "timestamp": "2023-06-15T10:33:45",
+            "severity": "medium",
+            "source": "Email Security Gateway",
+            "actions": [
+                "Release Email",
+                "Delete Email",
+                "Notify User",
+                "Block Sender Domain"
+            ],
+            "recommended_action": "Delete Email",
+            "time_limit": 15,
+            "difficulty": "medium"
+        },
+        {
+            "id": "alert10",
+            "title": "Privilege Escalation Detected",
+            "description": "User msmith elevated to administrator privileges on server SRV-APP-03 at 13:45:22",
+            "timestamp": "2023-06-15T13:50:10",
+            "severity": "high",
+            "source": "SIEM",
+            "actions": [
+                "Ignore",
+                "Revoke Privileges",
+                "Contact User",
+                "Escalate to SOC"
+            ],
+            "recommended_action": "Revoke Privileges",
+            "time_limit": 20,
+            "difficulty": "hard"
+        },
+        {
+            "id": "alert11",
+            "title": "SSL Certificate Expiring",
+            "description": "SSL Certificate for company.com will expire in 7 days",
+            "timestamp": "2023-06-15T09:15:00",
+            "severity": "low",
+            "source": "Certificate Monitor",
+            "actions": [
+                "Ignore",
+                "Renew Certificate",
+                "Schedule Renewal",
+                "Escalate to Web Team"
+            ],
+            "recommended_action": "Schedule Renewal",
+            "time_limit": 15,
+            "difficulty": "easy"
+        },
+        {
+            "id": "alert12",
+            "title": "Database Query Anomaly",
+            "description": "Unusual database query pattern detected from application App-CRM accessing customer PII data",
+            "timestamp": "2023-06-15T14:55:33",
+            "severity": "medium",
+            "source": "Database Activity Monitor",
+            "actions": [
+                "Ignore",
+                "Block Application Access",
+                "Investigate Query Patterns",
+                "Escalate to DBA Team"
+            ],
+            "recommended_action": "Investigate Query Patterns",
+            "time_limit": 20,
+            "difficulty": "medium"
+        },
+        {
+            "id": "alert13",
+            "title": "Ransomware Behavior Detected",
+            "description": "Potential ransomware activity detected on workstation WS-112 - multiple files being encrypted",
+            "timestamp": "2023-06-15T15:22:45",
+            "severity": "critical",
+            "source": "Endpoint Protection",
+            "actions": [
+                "Ignore",
+                "Isolate System",
+                "Kill Process",
+                "Escalate to Incident Response"
+            ],
+            "recommended_action": "Isolate System",
+            "time_limit": 25,
+            "difficulty": "hard"
+        },
+        {
+            "id": "alert14",
+            "title": "New Device Connected",
+            "description": "Unrecognized device with MAC 00:1A:2B:3C:4D:5E connected to network in Finance department",
+            "timestamp": "2023-06-15T11:05:12",
+            "severity": "medium",
+            "source": "NAC System",
+            "actions": [
+                "Ignore",
+                "Quarantine Device",
+                "Block Device",
+                "Escalate to Network Team"
+            ],
+            "recommended_action": "Quarantine Device",
+            "time_limit": 15,
+            "difficulty": "medium"
+        },
+        {
+            "id": "alert15",
+            "title": "Brute Force Attack",
+            "description": "Brute force attack detected against VPN server from IP 91.234.56.78 - 150 attempts in 5 minutes",
+            "timestamp": "2023-06-15T17:10:33",
+            "severity": "high",
+            "source": "VPN Server",
+            "actions": [
+                "Ignore",
+                "Block IP",
+                "Enable Additional Authentication",
+                "Escalate to SOC"
+            ],
+            "recommended_action": "Block IP",
+            "time_limit": 20,
+            "difficulty": "hard"
+        }
+    ]
+}

@@ -1,0 +1,134 @@
+{
+    "application": {
+        "name": "NEXARIS Cognitive Load Estimator",
+        "version": "1.0.0",
+        "log_level": "INFO",
+        "auto_save": true,
+        "save_interval": 60,
+        "startup_mode": "dashboard"
+    },
+    "ui": {
+        "theme": "light",
+        "font_size": 10,
+        "window": {
+            "width": 1024,
+            "height": 768,
+            "maximized": false
+        },
+        "dashboard": {
+            "update_interval": 1000,
+            "gauge_style": "modern",
+            "chart_history": 300
+        },
+        "visualization": {
+            "chart_style": "seaborn-v0_8-darkgrid",
+            "color_map": "viridis",
+            "default_view": "time_series"
+        }
+    },
+    "task": {
+        "default_duration": 300,
+        "default_type": "question_set",
+        "default_question_set": "general",
+        "default_alert_set": "general",
+        "question_sets_path": "data/question_sets",
+        "alert_sets_path": "data/alert_sets",
+        "countdown_warning": 60,
+        "auto_advance": false,
+        "show_progress": true,
+        "difficulty_levels": ["easy", "medium", "hard"]
+    },
+    "tracking": {
+        "behavior": {
+            "enabled": true,
+            "mouse_tracking": true,
+            "keyboard_tracking": true,
+            "hesitation_threshold": 2.0,
+            "sampling_rate": 10,
+            "movement_threshold": 5.0
+        }
+    },
+    "facial": {
+        "enabled": true,
+        "camera_index": 0,
+        "detection_method": "haarcascade",
+        "haarcascade_path": "data/models/haarcascade_frontalface_default.xml",
+        "dnn_model_path": "data/models/face_detection_model.pb",
+        "emotion_model_path": "data/models/emotion_model.onnx",
+        "confidence_threshold": 0.6,
+        "frame_interval": 100,
+        "save_frames": false,
+        "frames_path": "data/frames",
+        "display_video": true,
+        "display_emotions": true
+    },
+    "scoring": {
+        "method": "weighted_sum",
+        "update_interval": 1000,
+        "smoothing_factor": 0.3,
+        "weights": {
+            "behavior": 0.3,
+            "facial": 0.3,
+            "performance": 0.3,
+            "eeg": 0.1
+        },
+        "thresholds": {
+            "low": 0.4,
+            "high": 0.7
+        },
+        "ml": {
+            "enabled": false,
+            "model_path": "data/models/cognitive_load_model.pkl",
+            "features": ["behavior_score", "facial_score", "performance_score", "eeg_score", "response_time", "mouse_movement", "click_count", "hesitation_count"]
+        }
+    },
+    "advanced": {
+        "ml": {
+            "enabled": false,
+            "framework": "scikit-learn",
+            "model_type": "random_forest",
+            "training_data_path": "data/training",
+            "auto_train": false,
+            "training_interval": 86400
+        },
+        "eeg": {
+            "enabled": false,
+            "device": "muse2",
+            "sampling_rate": 256,
+            "channels": ["TP9", "AF7", "AF8", "TP10"],
+            "bands": {
+                "delta": [1, 4],
+                "theta": [4, 8],
+                "alpha": [8, 13],
+                "beta": [13, 30],
+                "gamma": [30, 50]
+            },
+            "weights": {
+                "delta": 0.1,
+                "theta": 0.3,
+                "alpha": -0.3,
+                "beta": 0.4,
+                "gamma": 0.2
+            }
+        },
+        "api": {
+            "enabled": false,
+            "endpoint": "http://localhost:5000/api",
+            "key": "",
+            "update_interval": 5000
+        }
+    },
+    "data": {
+        "storage_path": "data/sessions",
+        "format": "json",
+        "compression": false,
+        "encryption": false,
+        "encryption_key": "",
+        "retention_days": 30,
+        "export": {
+            "default_format": "CSV",
+            "include_raw_data": true,
+            "include_metadata": true
+        }
+    }
+}
