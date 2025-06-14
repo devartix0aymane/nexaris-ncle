@@ -1,0 +1,67 @@
+[
+    {
+        "id": "alert_001",
+        "question": "You receive an alert showing multiple failed login attempts from different countries for the same user account. What is your first action?",
+        "options": [
+            "Immediately lock the account",
+            "Call the user to verify activity",
+            "Check if the user is traveling",
+            "Ignore as it's probably a false positive"
+        ],
+        "correct_answer": "Check if the user is traveling",
+        "difficulty": "medium",
+        "category": "authentication"
+    },
+    {
+        "id": "alert_002",
+        "question": "An IDS alert shows a potential SQL injection attempt. The target system is a test server with no production data. How would you prioritize this alert?",
+        "options": [
+            "Critical",
+            "High",
+            "Medium",
+            "Low"
+        ],
+        "correct_answer": "Medium",
+        "difficulty": "medium",
+        "category": "web_security"
+    },
+    {
+        "id": "alert_003",
+        "question": "You receive an alert for unusual outbound traffic from a workstation to an IP address in a foreign country. What should you check first?",
+        "options": [
+            "Block the IP immediately",
+            "Check IP reputation in threat intelligence",
+            "Format the workstation",
+            "Disconnect the network"
+        ],
+        "correct_answer": "Check IP reputation in threat intelligence",
+        "difficulty": "medium",
+        "category": "network_monitoring"
+    },
+    {
+        "id": "alert_004",
+        "question": "A SIEM alert shows a user accessing sensitive files at 3 AM local time. The user normally works 9-5. What is your first response?",
+        "options": [
+            "Revoke access immediately",
+            "Check if overtime was approved",
+            "Call the user regardless of time",
+            "Wait until morning to investigate"
+        ],
+        "correct_answer": "Check if overtime was approved",
+        "difficulty": "hard",
+        "category": "data_access"
+    },
+    {
+        "id": "alert_005",
+        "question": "You receive an alert for a potential malware detection on a server. The antivirus quarantined the file. What should you do next?",
+        "options": [
+            "Restore the file to check if it's a false positive",
+            "Immediately reimage the server",
+            "Check for other indicators of compromise",
+            "Delete the quarantined file"
+        ],
+        "correct_answer": "Check for other indicators of compromise",
+        "difficulty": "hard",
+        "category": "malware"
+    }
+]

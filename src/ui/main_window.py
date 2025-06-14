@@ -114,7 +114,7 @@ class MainWindow(QMainWindow):
         self.tab_widget.addTab(self.task_widget, "Task Simulator")
         
         # Create visualization tab
-        self.visualization_widget = VisualizationWidget(self.config)
+        self.visualization_widget = VisualizationWidget(self.data_manager, self.config)
         self.tab_widget.addTab(self.visualization_widget, "Visualizations")
         
         # Create settings tab
@@ -122,7 +122,7 @@ class MainWindow(QMainWindow):
         self.tab_widget.addTab(self.settings_widget, "Settings")
         
         # Create camera widget (not in tabs)
-        self.camera_widget = CameraWidget(self.config)
+        self.camera_widget = CameraWidget()
         self.camera_widget.setVisible(False)  # Hidden by default
         
         # Create menu bar
@@ -483,10 +483,10 @@ class MainWindow(QMainWindow):
                 return
             
             # End current session
-            self.data_manager.end_session()
+            self.data_manager.end_current_session()
         
         # Start new session
-        session_id = self.data_manager.start_session()
+        session_id = self.data_manager.start_new_session()
         
         # Update status
         self.status_label.setText(f"Session {session_id} started")
@@ -652,14 +652,17 @@ class MainWindow(QMainWindow):
             "<p>© 2023 NEXARIS</p>"
         )
     
-    @pyqtSlot(str)
-    def on_task_started(self, task_id: str) -> None:
+    @pyqtSlot(dict)
+    def on_task_started(self, task_data: Dict[str, Any]) -> None:
         """
         Handle task started signal
         
         Args:
-            task_id: Task ID
+            task_data: Task data dictionary
         """
+        # Get task ID from task data
+        task_id = task_data.get('id', 'unknown')
+        
         # Update status
         self.status_label.setText(f"Task {task_id} started")
         
@@ -670,15 +673,18 @@ class MainWindow(QMainWindow):
         
         self.logger.info(f"Task started: {task_id}")
     
-    @pyqtSlot(str, dict)
-    def on_task_completed(self, task_id: str, results: Dict[str, Any]) -> None:
+    @pyqtSlot(dict)
+    def on_task_completed(self, task_data: Dict[str, Any]) -> None:
         """
         Handle task completed signal
         
         Args:
-            task_id: Task ID
-            results: Task results
+            task_data: Task data dictionary
         """
+        # Get task ID and results from task data
+        task_id = task_data.get('id', 'unknown')
+        results = task_data.get('results', {})
+        
         # Update status
         self.status_label.setText(f"Task {task_id} completed")
         
@@ -704,22 +710,21 @@ class MainWindow(QMainWindow):
         
         self.logger.info(f"Task completed: {task_id}")
     
-    @pyqtSlot(str, float, float)
-    def on_task_progress(self, task_id: str, progress: float, remaining_time: float) -> None:
+    @pyqtSlot(int, int)
+    def on_task_progress(self, current: int, total: int) -> None:
         """
         Handle task progress signal
         
         Args:
-            task_id: Task ID
-            progress: Task progress (0.0 to 1.0)
-            remaining_time: Remaining time in seconds
+            current: Current progress value
+            total: Total progress value
         """
+        # Calculate progress percentage and remaining time
+        progress = current / total if total > 0 else 0.0
+        
         # Update status
-        minutes = int(remaining_time // 60)
-        seconds = int(remaining_time % 60)
         self.status_label.setText(
-            f"Task {task_id} in progress: {progress:.0%} "
-            f"({minutes:02d}:{seconds:02d} remaining)"
+            f"Task in progress: {progress:.0%} ({current}/{total})"
         )
     
     @pyqtSlot(float)

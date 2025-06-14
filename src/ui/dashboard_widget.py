@@ -16,7 +16,7 @@ from typing import Dict, List, Any, Optional, Tuple, Callable
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QGridLayout,
     QPushButton, QLabel, QFrame, QSplitter, QGroupBox,
-    QProgressBar, QSpacerItem, QSizePolicy
+    QProgressBar, QSpacerItem, QSizePolicy, QFormLayout
 )
 from PyQt5.QtCore import Qt, QTimer, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QFont, QColor, QPalette, QPixmap
@@ -419,7 +419,9 @@ class MetricsPanel(QWidget):
             self.completion_rate_label.setText("N/A")
         
         if metrics.get('difficulty') is not None:
-            self.difficulty_label.setText(f"{metrics.get('difficulty', 0.0):.2f}")
+            # Handle difficulty as a string value, not a float
+            difficulty = metrics.get('difficulty', 'N/A')
+            self.difficulty_label.setText(f"{difficulty}")
         else:
             self.difficulty_label.setText("N/A")
     

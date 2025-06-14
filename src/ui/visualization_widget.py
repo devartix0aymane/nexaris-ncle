@@ -86,6 +86,7 @@ class VisualizationWidget(QWidget):
         # Initialize data
         self.current_session_id = None
         self.session_data = None
+        self.cognitive_load_calculator = None
         
         # Create layout
         self.setup_ui()
@@ -594,6 +595,19 @@ class VisualizationWidget(QWidget):
         # Create matplotlib toolbar
         self.box_toolbar = NavigationToolbar(self.box_canvas, self.box_tab)
         self.box_layout.addWidget(self.box_toolbar)
+    
+    def set_components(self, data_manager, cognitive_load_calculator) -> None:
+        """Set core components
+        
+        Args:
+            data_manager: Data manager instance
+            cognitive_load_calculator: Cognitive load calculator instance
+        """
+        self.data_manager = data_manager
+        self.cognitive_load_calculator = cognitive_load_calculator
+        
+        # Load sessions
+        self.load_sessions()
     
     def load_sessions(self) -> None:
         """
@@ -1325,3 +1339,13 @@ class VisualizationWidget(QWidget):
         except Exception as e:
             self.logger.error(f"Failed to export session data: {e}")
             QMessageBox.critical(self, "Export Error", f"Failed to export session data: {e}")
+    
+    def update_ui(self) -> None:
+        """
+        Update the UI components
+        """
+        # This method is called by MainWindow.update_ui()
+        # Update visualizations if needed
+        if self.current_session_id and self.isVisible():
+            # Refresh data if needed
+            pass

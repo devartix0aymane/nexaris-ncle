@@ -1,5 +1,5 @@
 # Core dependencies
-python>=3.8,<3.11
+# python>=3.8,<3.11  # Removed as pip doesn't install Python itself
 PyQt5>=5.15.0
 numpy>=1.20.0
 pandas>=1.3.0

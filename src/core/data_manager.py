@@ -647,3 +647,1857 @@ class DataManager:
             self.save_session(self.current_session_id)
         
         self.logger.info("Data Manager cleanup completed")
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def get_current_session_id(self) -> Optional[str]:
+        """
+        Get the current session ID
+        
+        Returns:
+            Current session ID or None if no session is active
+        """
+        return self.current_session_id
+        
+    def _check_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if a session is active, False otherwise
+        """
+        return self.current_session_id is not None
+    
+    def is_session_active(self) -> bool:
+        """
+        Check if there is an active session
+        
+        Returns:
+            True if

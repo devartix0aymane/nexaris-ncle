@@ -16,7 +16,7 @@ from datetime import datetime
 from typing import Dict, List, Any, Optional, Tuple, Callable
 
 # PyQt imports for event handling
-from PyQt5.QtCore import QObject, pyqtSignal, QPoint, Qt
+from PyQt5.QtCore import QObject, pyqtSignal, QPoint, Qt, QEvent
 
 # Import utilities
 from ..utils.logging_utils import get_logger
@@ -398,15 +398,15 @@ class BehaviorTracker(QObject):
             
             def eventFilter(self, obj, event):
                 # Track mouse movement
-                if event.type() == Qt.MouseMove and self.tracker.mouse_tracking:
+                if event.type() == QEvent.MouseMove and self.tracker.mouse_tracking:
                     self.tracker.mouse_moved.emit(event.pos())
                 
                 # Track mouse clicks
-                elif event.type() == Qt.MouseButtonPress and self.tracker.mouse_tracking:
+                elif event.type() == QEvent.MouseButtonPress and self.tracker.mouse_tracking:
                     self.tracker.mouse_clicked.emit(event.pos(), event.button())
                 
                 # Track key presses
-                elif event.type() == Qt.KeyPress and self.tracker.keyboard_tracking:
+                elif event.type() == QEvent.KeyPress and self.tracker.keyboard_tracking:
                     self.tracker.key_pressed.emit(event.key())
                 
                 # Pass event to original handler

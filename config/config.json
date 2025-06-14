@@ -1,0 +1,71 @@
+{
+    "application": {
+        "name": "NEXARIS Cognitive Load Estimator",
+        "version": "0.1.0",
+        "debug": false
+    },
+    "ui": {
+        "theme": "dark",
+        "window_width": 1200,
+        "window_height": 800,
+        "refresh_rate": 30
+    },
+    "task": {
+        "default_duration": 300,
+        "difficulty_levels": [
+            "easy",
+            "medium",
+            "hard"
+        ],
+        "default_difficulty": "medium",
+        "question_sets": [
+            "general",
+            "cybersecurity",
+            "alert_triage"
+        ],
+        "default_question_set": "cybersecurity"
+    },
+    "tracking": {
+        "mouse_tracking": true,
+        "keyboard_tracking": true,
+        "facial_analysis": false,
+        "sampling_rate": 10,
+        "save_raw_data": true
+    },
+    "facial_analysis": {
+        "enabled": false,
+        "camera_index": 0,
+        "detection_interval": 500,
+        "emotions_to_track": [
+            "neutral",
+            "happy",
+            "sad",
+            "angry",
+            "frustrated",
+            "confused",
+            "focused"
+        ]
+    },
+    "scoring": {
+        "algorithm": "standard",
+        "weights": {
+            "response_time": 0.3,
+            "mouse_movement": 0.2,
+            "click_frequency": 0.15,
+            "hesitation": 0.25,
+            "facial_emotion": 0.1
+        },
+        "normalization": "z-score"
+    },
+    "advanced": {
+        "ml_model_path": "",
+        "eeg_enabled": false,
+        "eeg_device": "",
+        "eeg_sampling_rate": 250
+    },
+    "data": {
+        "storage_path": "A:\\NEXARIS CLE\\data",
+        "backup_interval": 300,
+        "max_session_history": 50
+    }
+}

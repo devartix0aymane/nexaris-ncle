@@ -18,14 +18,22 @@ from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional, Union, Tuple, Callable
 
+# PyQt imports for signals
+from PyQt5.QtCore import QObject, pyqtSignal
+
 # Import utilities
 from ..utils.logging_utils import get_logger
 
 
-class TaskSimulator:
+class TaskSimulator(QObject):
     """
     Simulates cognitive tasks for measuring user performance and cognitive load
     """
+    
+    # Define signals
+    task_started = pyqtSignal(dict)
+    task_completed = pyqtSignal(dict)
+    task_progress = pyqtSignal(int, int)  # current, total
     
     def __init__(self, config: Dict[str, Any]):
         """
@@ -34,6 +42,7 @@ class TaskSimulator:
         Args:
             config: Application configuration dictionary
         """
+        super().__init__()
         self.config = config
         self.logger = get_logger(__name__)
         
@@ -42,12 +51,8 @@ class TaskSimulator:
         self.default_duration = self.task_config.get('default_duration', 300)  # seconds
         self.difficulty_levels = self.task_config.get('difficulty_levels', ["easy", "medium", "hard"])
         self.default_difficulty = self.task_config.get('default_difficulty', "medium")
-        
-        # Load question sets
         self.question_sets = {}
         self._load_question_sets()
-        
-        # Initialize task state
         self.current_task = None
         self.task_start_time = None
         self.task_end_time = None
@@ -98,706 +103,1163 @@ class TaskSimulator:
         if set_name == "general":
             default_questions = [
                 {
-                    "id": "gen_001",
-                    "question": "What is 25 × 4?",
-                    "options": ["75", "100", "125", "150"],
-                    "correct_answer": "100",
-                    "difficulty": "easy",
-                    "category": "math"
-                },
-                {
-                    "id": "gen_002",
-                    "question": "Which of these is NOT a primary color?",
-                    "options": ["Red", "Blue", "Green", "Yellow"],
-                    "correct_answer": "Green",
-                    "difficulty": "easy",
-                    "category": "general_knowledge"
-                },
-                {
-                    "id": "gen_003",
+                    "id": "g1",
                     "question": "What is the capital of France?",
-                    "options": ["London", "Berlin", "Paris", "Madrid"],
+                    "options": ["Paris", "London", "Berlin", "Madrid"],
                     "correct_answer": "Paris",
                     "difficulty": "easy",
-                    "category": "geography"
+                    "category": "geography",
+                    "time_limit": 30
                 },
                 {
-                    "id": "gen_004",
-                    "question": "Solve for x: 3x + 7 = 22",
-                    "options": ["3", "5", "7", "15"],
-                    "correct_answer": "5",
+                    "id": "g2",
+                    "question": "What is 15 × 17?",
+                    "options": ["255", "257", "267", "277"],
+                    "correct_answer": "255",
                     "difficulty": "medium",
-                    "category": "math"
+                    "category": "mathematics",
+                    "time_limit": 45
                 },
                 {
-                    "id": "gen_005",
-                    "question": "Which planet is known as the Red Planet?",
-                    "options": ["Venus", "Mars", "Jupiter", "Saturn"],
-                    "correct_answer": "Mars",
+                    "id": "g3",
+                    "question": "Who wrote 'War and Peace'?",
+                    "options": ["Leo Tolstoy", "Fyodor Dostoevsky", "Anton Chekhov", "Ivan Turgenev"],
+                    "correct_answer": "Leo Tolstoy",
+                    "difficulty": "medium",
+                    "category": "literature",
+                    "time_limit": 30
+                },
+                {
+                    "id": "g4",
+                    "question": "What is the chemical symbol for gold?",
+                    "options": ["Au", "Ag", "Fe", "Cu"],
+                    "correct_answer": "Au",
                     "difficulty": "easy",
-                    "category": "science"
+                    "category": "science",
+                    "time_limit": 20
+                },
+                {
+                    "id": "g5",
+                    "question": "In which year did World War II end?",
+                    "options": ["1945", "1944", "1946", "1947"],
+                    "correct_answer": "1945",
+                    "difficulty": "easy",
+                    "category": "history",
+                    "time_limit": 25
                 }
             ]
-        
         elif set_name == "cybersecurity":
             default_questions = [
                 {
-                    "id": "cyber_001",
+                    "id": "cs1",
                     "question": "Which of the following is NOT a common type of cyber attack?",
-                    "options": ["Phishing", "SQL Injection", "Quantum Tunneling", "DDoS"],
-                    "correct_answer": "Quantum Tunneling",
+                    "options": ["Data Compression", "Phishing", "Man-in-the-Middle", "DDoS"],
+                    "correct_answer": "Data Compression",
                     "difficulty": "easy",
-                    "category": "attacks"
+                    "category": "attacks",
+                    "time_limit": 30
                 },
                 {
-                    "id": "cyber_002",
+                    "id": "cs2",
                     "question": "What does SSL stand for?",
-                    "options": ["Secure Socket Layer", "System Security Level", "Secure System Login", "Standard Security License"],
+                    "options": ["Secure Socket Layer", "System Security Layer", "Secure System Login", "Safe Socket Layer"],
                     "correct_answer": "Secure Socket Layer",
-                    "difficulty": "easy",
-                    "category": "protocols"
-                },
-                {
-                    "id": "cyber_003",
-                    "question": "Which port is commonly used for HTTPS traffic?",
-                    "options": ["21", "22", "443", "8080"],
-                    "correct_answer": "443",
                     "difficulty": "medium",
-                    "category": "networking"
+                    "category": "protocols",
+                    "time_limit": 25
                 },
                 {
-                    "id": "cyber_004",
-                    "question": "Which encryption algorithm is considered broken and should not be used?",
-                    "options": ["AES-256", "RSA-2048", "MD5", "SHA-256"],
-                    "correct_answer": "MD5",
-                    "difficulty": "medium",
-                    "category": "cryptography"
+                    "id": "cs3",
+                    "question": "Which encryption algorithm is considered the most secure as of 2023?",
+                    "options": ["AES-256", "DES", "MD5", "SHA-1"],
+                    "correct_answer": "AES-256",
+                    "difficulty": "hard",
+                    "category": "encryption",
+                    "time_limit": 40
                 },
                 {
-                    "id": "cyber_005",
+                    "id": "cs4",
                     "question": "What is the primary purpose of a firewall?",
-                    "options": [
-                        "Detect viruses", 
-                        "Filter network traffic", 
-                        "Encrypt data", 
-                        "Backup data"
-                    ],
-                    "correct_answer": "Filter network traffic",
+                    "options": ["Monitor network traffic and block unauthorized access", "Encrypt data transmissions", "Scan for viruses", "Backup data"],
+                    "correct_answer": "Monitor network traffic and block unauthorized access",
                     "difficulty": "easy",
-                    "category": "network_security"
+                    "category": "network security",
+                    "time_limit": 35
+                },
+                {
+                    "id": "cs5",
+                    "question": "What type of attack attempts to exhaust system resources?",
+                    "options": ["Denial of Service", "SQL Injection", "Cross-Site Scripting", "Social Engineering"],
+                    "correct_answer": "Denial of Service",
+                    "difficulty": "medium",
+                    "category": "attacks",
+                    "time_limit": 30
                 }
             ]
-        
         elif set_name == "alert_triage":
             default_questions = [
                 {
-                    "id": "alert_001",
-                    "question": "You receive an alert showing multiple failed login attempts from different countries for the same user account. What is your first action?",
-                    "options": [
-                        "Immediately lock the account", 
-                        "Call the user to verify activity", 
-                        "Check if the user is traveling", 
-                        "Ignore as it's probably a false positive"
-                    ],
-                    "correct_answer": "Check if the user is traveling",
+                    "id": "at1",
+                    "question": "You receive an alert about multiple failed login attempts from different countries. What should you do first?",
+                    "options": ["Lock the account and investigate", "Ignore it as a false positive", "Reset the user's password without investigation", "Wait for more failed attempts"],
+                    "correct_answer": "Lock the account and investigate",
                     "difficulty": "medium",
-                    "category": "authentication"
+                    "category": "account security",
+                    "time_limit": 45
                 },
                 {
-                    "id": "alert_002",
-                    "question": "An IDS alert shows a potential SQL injection attempt. The target system is a test server with no production data. How would you prioritize this alert?",
-                    "options": ["Critical", "High", "Medium", "Low"],
-                    "correct_answer": "Medium",
-                    "difficulty": "medium",
-                    "category": "web_security"
-                },
-                {
-                    "id": "alert_003",
-                    "question": "You receive an alert for unusual outbound traffic from a workstation to an IP address in a foreign country. What should you check first?",
-                    "options": [
-                        "Block the IP immediately", 
-                        "Check IP reputation in threat intelligence", 
-                        "Format the workstation", 
-                        "Disconnect the network"
-                    ],
-                    "correct_answer": "Check IP reputation in threat intelligence",
-                    "difficulty": "medium",
-                    "category": "network_monitoring"
-                },
-                {
-                    "id": "alert_004",
-                    "question": "A SIEM alert shows a user accessing sensitive files at 3 AM local time. The user normally works 9-5. What is your first response?",
-                    "options": [
-                        "Revoke access immediately", 
-                        "Check if overtime was approved", 
-                        "Call the user regardless of time", 
-                        "Wait until morning to investigate"
-                    ],
-                    "correct_answer": "Check if overtime was approved",
+                    "id": "at2",
+                    "question": "An IDS alert shows unusual outbound traffic to an unknown IP address. What is your first step?",
+                    "options": ["Check IP reputation and investigate the source", "Block all outbound traffic", "Shut down the network", "Ignore the alert"],
+                    "correct_answer": "Check IP reputation and investigate the source",
                     "difficulty": "hard",
-                    "category": "data_access"
+                    "category": "network security",
+                    "time_limit": 50
                 },
                 {
-                    "id": "alert_005",
-                    "question": "You receive an alert for a potential malware detection on a server. The antivirus quarantined the file. What should you do next?",
-                    "options": [
-                        "Restore the file to check if it's a false positive", 
-                        "Immediately reimage the server", 
-                        "Check for other indicators of compromise", 
-                        "Delete the quarantined file"
-                    ],
-                    "correct_answer": "Check for other indicators of compromise",
+                    "id": "at3",
+                    "question": "You receive an alert about a potential data exfiltration. Which of these is NOT a typical indicator?",
+                    "options": ["Regular small HTTP requests", "Large email attachments to external domains", "Unusual database queries", "Encrypted traffic to new destinations"],
+                    "correct_answer": "Regular small HTTP requests",
                     "difficulty": "hard",
-                    "category": "malware"
+                    "category": "data security",
+                    "time_limit": 60
+                },
+                {
+                    "id": "at4",
+                    "question": "A system shows signs of high CPU usage with no apparent cause. What should you check first?",
+                    "options": ["Running processes and their resource usage", "System logs from last month", "Network configuration", "User account list"],
+                    "correct_answer": "Running processes and their resource usage",
+                    "difficulty": "medium",
+                    "category": "system security",
+                    "time_limit": 40
+                },
+                {
+                    "id": "at5",
+                    "question": "You receive an alert about a potential phishing email. What is the most important first step?",
+                    "options": ["Analyze the email headers and links without clicking", "Forward the email to all security team members", "Delete the email immediately", "Click links to see where they lead"],
+                    "correct_answer": "Analyze the email headers and links without clicking",
+                    "difficulty": "easy",
+                    "category": "email security",
+                    "time_limit": 35
+                }
+            ]
+        else:
+            # Generic questions for other sets
+            default_questions = [
+                {
+                    "id": "q1",
+                    "question": "Sample question 1?",
+                    "options": ["Option A", "Option B", "Option C", "Option D"],
+                    "correct_answer": "Option A",
+                    "difficulty": "medium",
+                    "category": "general",
+                    "time_limit": 30
+                },
+                {
+                    "id": "q2",
+                    "question": "Sample question 2?",
+                    "options": ["Option A", "Option B", "Option C", "Option D"],
+                    "correct_answer": "Option B",
+                    "difficulty": "easy",
+                    "category": "general",
+                    "time_limit": 20
+                },
+                {
+                    "id": "q3",
+                    "question": "Sample question 3?",
+                    "options": ["Option A", "Option B", "Option C", "Option D"],
+                    "correct_answer": "Option C",
+                    "difficulty": "hard",
+                    "category": "general",
+                    "time_limit": 45
+                },
+                {
+                    "id": "q4",
+                    "question": "Sample question 4?",
+                    "options": ["Option A", "Option B", "Option C", "Option D"],
+                    "correct_answer": "Option D",
+                    "difficulty": "medium",
+                    "category": "general",
+                    "time_limit": 30
+                },
+                {
+                    "id": "q5",
+                    "question": "Sample question 5?",
+                    "options": ["Option A", "Option B", "Option C", "Option D"],
+                    "correct_answer": "Option A",
+                    "difficulty": "easy",
+                    "category": "general",
+                    "time_limit": 25
                 }
             ]
         
-        # Save default questions to file
+        # Save the default question set
         try:
             with open(file_path, 'w') as f:
                 json.dump(default_questions, f, indent=4)
             
-            self.logger.info(f"Created default question set '{set_name}' at {file_path}")
+            self.logger.info(f"Created default question set '{set_name}' with {len(default_questions)} questions")
         
         except Exception as e:
             self.logger.error(f"Error creating default question set '{set_name}': {e}")
     
-    def register_callback(self, event_type: str, callback: Callable) -> None:
+    def get_available_question_sets(self) -> List[str]:
         """
-        Register a callback function for task events
+        Get a list of available question sets
+        
+        Returns:
+            List of question set names
+        """
+        return list(self.question_sets.keys())
+    
+    def get_question_set(self, set_name: str) -> List[Dict[str, Any]]:
+        """
+        Get a specific question set
         
         Args:
-            event_type: Event type (e.g., 'task_start', 'task_end', 'question_answered')
-            callback: Callback function to be called when the event occurs
+            set_name: Name of the question set
+            
+        Returns:
+            List of questions in the set
+        """
+        return self.question_sets.get(set_name, [])
+    
+    def get_questions_by_difficulty(self, set_name: str, difficulty: str) -> List[Dict[str, Any]]:
+        """
+        Get questions from a set filtered by difficulty
+        
+        Args:
+            set_name: Name of the question set
+            difficulty: Difficulty level to filter by
+            
+        Returns:
+            List of questions matching the difficulty
+        """
+        questions = self.get_question_set(set_name)
+        return [q for q in questions if q.get('difficulty', '') == difficulty]
+    
+    def get_questions_by_category(self, set_name: str, category: str) -> List[Dict[str, Any]]:
+        """
+        Get questions from a set filtered by category
+        
+        Args:
+            set_name: Name of the question set
+            category: Category to filter by
+            
+        Returns:
+            List of questions matching the category
+        """
+        questions = self.get_question_set(set_name)
+        return [q for q in questions if q.get('category', '') == category]
+    
+    def start_task(self, task_type: str, question_set: str, difficulty: str = None, 
+                  duration: int = None, num_questions: int = 10) -> Dict[str, Any]:
+        """
+        Start a new cognitive task
+        
+        Args:
+            task_type: Type of task (quiz, monitoring, etc.)
+            question_set: Name of the question set to use
+            difficulty: Difficulty level (easy, medium, hard)
+            duration: Task duration in seconds
+            num_questions: Number of questions to include
+            
+        Returns:
+            Task configuration dictionary
+        """
+        # Use default values if not specified
+        if difficulty is None:
+            difficulty = self.default_difficulty
+        
+        if duration is None:
+            duration = self.default_duration
+        
+        # Generate a unique task ID
+        task_id = str(uuid.uuid4())
+        
+        # Set up task start and end times
+        self.task_start_time = datetime.now()
+        self.task_end_time = self.task_start_time + timedelta(seconds=duration)
+        
+        # Select questions based on difficulty and question set
+        available_questions = self.get_questions_by_difficulty(question_set, difficulty)
+        
+        # If not enough questions of the specified difficulty, use questions from all difficulties
+        if len(available_questions) < num_questions:
+            available_questions = self.get_question_set(question_set)
+        
+        # Randomly select questions up to the requested number
+        selected_questions = []
+        if available_questions:
+            selected_questions = random.sample(
+                available_questions, 
+                min(num_questions, len(available_questions))
+            )
+        
+        # Create task configuration
+        self.current_task = {
+            'id': task_id,
+            'type': task_type,
+            'question_set': question_set,
+            'difficulty': difficulty,
+            'duration': duration,
+            'start_time': self.task_start_time,
+            'end_time': self.task_end_time,
+            'questions': selected_questions,
+            'current_question_index': 0,
+            'answers': [],
+            'metrics': {
+                'correct_answers': 0,
+                'incorrect_answers': 0,
+                'skipped_questions': 0,
+                'average_response_time': 0,
+                'total_response_time': 0
+            }
+        }
+        
+        # Emit task started signal
+        self.task_started.emit(self.current_task)
+        
+        self.logger.info(f"Started task '{task_id}' with {len(selected_questions)} questions")
+        
+        return self.current_task
+    
+    def get_current_task(self) -> Optional[Dict[str, Any]]:
+        """
+        Get the current task configuration
+        
+        Returns:
+            Current task configuration or None if no task is active
+        """
+        return self.current_task
+    
+    def get_current_question(self) -> Optional[Dict[str, Any]]:
+        """
+        Get the current question
+        
+        Returns:
+            Current question or None if no task is active or all questions have been answered
+        """
+        if not self.current_task:
+            return None
+        
+        questions = self.current_task.get('questions', [])
+        current_index = self.current_task.get('current_question_index', 0)
+        
+        if current_index < len(questions):
+            return questions[current_index]
+        
+        return None
+    
+    def answer_question(self, answer: str, response_time: float) -> Dict[str, Any]:
+        """
+        Submit an answer for the current question
+        
+        Args:
+            answer: The selected answer
+            response_time: Time taken to respond in seconds
+            
+        Returns:
+            Result dictionary with correctness and feedback
+        """
+        if not self.current_task:
+            return {'error': 'No active task'}
+        
+        current_question = self.get_current_question()
+        if not current_question:
+            return {'error': 'No current question'}
+        
+        # Check if the answer is correct
+        correct_answer = current_question.get('correct_answer', '')
+        is_correct = (answer == correct_answer)
+        
+        # Update metrics
+        metrics = self.current_task['metrics']
+        if is_correct:
+            metrics['correct_answers'] += 1
+        else:
+            metrics['incorrect_answers'] += 1
+        
+        metrics['total_response_time'] += response_time
+        metrics['average_response_time'] = metrics['total_response_time'] / (
+            metrics['correct_answers'] + metrics['incorrect_answers'] + metrics['skipped_questions']
+        )
+        
+        # Record the answer
+        answer_record = {
+            'question_id': current_question.get('id', ''),
+            'question': current_question.get('question', ''),
+            'user_answer': answer,
+            'correct_answer': correct_answer,
+            'is_correct': is_correct,
+            'response_time': response_time,
+            'timestamp': datetime.now().isoformat()
+        }
+        
+        self.current_task['answers'].append(answer_record)
+        
+        # Move to the next question
+        self.current_task['current_question_index'] += 1
+        
+        # Check if all questions have been answered
+        if self.current_task['current_question_index'] >= len(self.current_task['questions']):
+            self.complete_task()
+        else:
+            # Emit progress signal
+            self.task_progress.emit(
+                self.current_task['current_question_index'],
+                len(self.current_task['questions'])
+            )
+        
+        # Prepare result
+        result = {
+            'is_correct': is_correct,
+            'correct_answer': correct_answer,
+            'feedback': 'Correct!' if is_correct else f'Incorrect. The correct answer is: {correct_answer}',
+            'response_time': response_time,
+            'next_question': self.get_current_question()
+        }
+        
+        return result
+    
+    def skip_question(self) -> Dict[str, Any]:
+        """
+        Skip the current question
+        
+        Returns:
+            Result dictionary with the skipped question and the next question
+        """
+        if not self.current_task:
+            return {'error': 'No active task'}
+        
+        current_question = self.get_current_question()
+        if not current_question:
+            return {'error': 'No current question'}
+        
+        # Update metrics
+        self.current_task['metrics']['skipped_questions'] += 1
+        
+        # Record the skipped question
+        skip_record = {
+            'question_id': current_question.get('id', ''),
+            'question': current_question.get('question', ''),
+            'user_answer': 'SKIPPED',
+            'correct_answer': current_question.get('correct_answer', ''),
+            'is_correct': False,
+            'response_time': 0,
+            'timestamp': datetime.now().isoformat()
+        }
+        
+        self.current_task['answers'].append(skip_record)
+        
+        # Move to the next question
+        self.current_task['current_question_index'] += 1
+        
+        # Check if all questions have been answered
+        if self.current_task['current_question_index'] >= len(self.current_task['questions']):
+            self.complete_task()
+        else:
+            # Emit progress signal
+            self.task_progress.emit(
+                self.current_task['current_question_index'],
+                len(self.current_task['questions'])
+            )
+        
+        # Prepare result
+        result = {
+            'skipped_question': current_question,
+            'correct_answer': current_question.get('correct_answer', ''),
+            'next_question': self.get_current_question()
+        }
+        
+        return result
+    
+    def complete_task(self) -> Dict[str, Any]:
+        """
+        Complete the current task and calculate final metrics
+        
+        Returns:
+            Task results dictionary
+        """
+        if not self.current_task:
+            return {'error': 'No active task'}
+        
+        # Calculate final metrics
+        metrics = self.current_task['metrics']
+        total_questions = len(self.current_task['questions'])
+        answered_questions = metrics['correct_answers'] + metrics['incorrect_answers']
+        
+        # Calculate accuracy
+        if answered_questions > 0:
+            accuracy = (metrics['correct_answers'] / answered_questions) * 100
+        else:
+            accuracy = 0
+        
+        # Calculate completion percentage
+        completion_percentage = ((answered_questions + metrics['skipped_questions']) / total_questions) * 100
+        
+        # Add final metrics
+        metrics['accuracy'] = accuracy
+        metrics['completion_percentage'] = completion_percentage
+        metrics['total_questions'] = total_questions
+        metrics['answered_questions'] = answered_questions
+        
+        # Record end time
+        self.current_task['actual_end_time'] = datetime.now()
+        
+        # Calculate total duration
+        start_time = self.current_task['start_time']
+        end_time = self.current_task['actual_end_time']
+        total_duration = (end_time - start_time).total_seconds()
+        metrics['total_duration'] = total_duration
+        
+        # Emit task completed signal
+        self.task_completed.emit(self.current_task)
+        
+        self.logger.info(f"Completed task '{self.current_task['id']}' with accuracy {accuracy:.2f}%")
+        
+        # Store the completed task for reference
+        completed_task = self.current_task
+        
+        # Reset current task
+        self.current_task = None
+        self.task_start_time = None
+        self.task_end_time = None
+        
+        return completed_task
+    
+    def cancel_task(self) -> Dict[str, Any]:
+        """
+        Cancel the current task
+        
+        Returns:
+            Cancelled task dictionary
+        """
+        if not self.current_task:
+            return {'error': 'No active task'}
+        
+        # Record cancellation
+        self.current_task['cancelled'] = True
+        self.current_task['actual_end_time'] = datetime.now()
+        
+        # Calculate partial metrics
+        metrics = self.current_task['metrics']
+        total_questions = len(self.current_task['questions'])
+        answered_questions = metrics['correct_answers'] + metrics['incorrect_answers']
+        
+        # Calculate accuracy for answered questions
+        if answered_questions > 0:
+            accuracy = (metrics['correct_answers'] / answered_questions) * 100
+        else:
+            accuracy = 0
+        
+        # Calculate completion percentage
+        completion_percentage = ((answered_questions + metrics['skipped_questions']) / total_questions) * 100
+        
+        # Add final metrics
+        metrics['accuracy'] = accuracy
+        metrics['completion_percentage'] = completion_percentage
+        metrics['total_questions'] = total_questions
+        metrics['answered_questions'] = answered_questions
+        
+        # Calculate total duration
+        start_time = self.current_task['start_time']
+        end_time = self.current_task['actual_end_time']
+        total_duration = (end_time - start_time).total_seconds()
+        metrics['total_duration'] = total_duration
+        
+        self.logger.info(f"Cancelled task '{self.current_task['id']}' with {completion_percentage:.2f}% completion")
+        
+        # Store the cancelled task for reference
+        cancelled_task = self.current_task
+        
+        # Reset current task
+        self.current_task = None
+        self.task_start_time = None
+        self.task_end_time = None
+        
+        return cancelled_task
+    
+    def is_task_active(self) -> bool:
+        """
+        Check if a task is currently active
+        
+        Returns:
+            True if a task is active, False otherwise
+        """
+        return self.current_task is not None
+    
+    def get_task_progress(self, task_id: str = None) -> Dict[str, Any]:
+        """
+        Get the current task progress
+        
+        Args:
+            task_id: Optional task ID (not used in current implementation, but kept for API compatibility)
+            
+        Returns:
+            Dictionary with progress information
+        """
+        if not self.current_task:
+            return None
+        
+        current_index = self.current_task.get('current_question_index', 0)
+        total_questions = len(self.current_task.get('questions', []))
+        
+        # Calculate progress percentage
+        progress = current_index / total_questions if total_questions > 0 else 0
+        
+        # Calculate remaining time
+        remaining_time = self.get_task_time_remaining()
+        
+        return {
+            'progress': progress,
+            'items_completed': current_index,
+            'items_total': total_questions,
+            'remaining_time': remaining_time,
+            'is_complete': current_index >= total_questions
+        }
+    
+    def get_task_metrics(self) -> Dict[str, Any]:
+        """
+        Get the current task metrics
+        
+        Returns:
+            Dictionary of task metrics
+        """
+        if not self.current_task:
+            return {}
+        
+        return self.current_task.get('metrics', {})
+    
+    def get_task_time_remaining(self) -> int:
+        """
+        Get the time remaining for the current task in seconds
+        
+        Returns:
+            Time remaining in seconds, or 0 if no task is active
+        """
+        if not self.current_task or not self.task_end_time:
+            return 0
+        
+        now = datetime.now()
+        if now > self.task_end_time:
+            return 0
+        
+        return int((self.task_end_time - now).total_seconds())
+    
+    def get_task_elapsed_time(self) -> int:
+        """
+        Get the elapsed time for the current task in seconds
+        
+        Returns:
+            Elapsed time in seconds, or 0 if no task is active
+        """
+        if not self.current_task or not self.task_start_time:
+            return 0
+        
+        now = datetime.now()
+        return int((now - self.task_start_time).total_seconds())
+    
+    def analyze_task_results(self, task_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Analyze task results to extract insights
+        
+        Args:
+            task_data: Task data dictionary
+            
+        Returns:
+            Analysis results dictionary
+        """
+        if not task_data:
+            return {'error': 'No task data provided'}
+        
+        # Extract basic metrics
+        metrics = task_data.get('metrics', {})
+        answers = task_data.get('answers', [])
+        
+        # Initialize results
+        results = {
+            'task_id': task_data.get('id', ''),
+            'question_set': task_data.get('question_set', ''),
+            'difficulty': task_data.get('difficulty', ''),
+            'basic_metrics': metrics,
+            'response_time_analysis': {},
+            'question_difficulty_analysis': {},
+            'category_performance': {},
+            'time_trend_analysis': {}
+        }
+        
+        # Skip further analysis if no answers
+        if not answers:
+            return results
+        
+        # Response time analysis
+        response_times = [a.get('response_time', 0) for a in answers if a.get('user_answer') != 'SKIPPED']
+        if response_times:
+            results['response_time_analysis'] = {
+                'min': min(response_times),
+                'max': max(response_times),
+                'mean': sum(response_times) / len(response_times),
+                'median': sorted(response_times)[len(response_times) // 2],
+                'total': sum(response_times)
+            }
+        
+        # Question difficulty analysis
+        questions = task_data.get('questions', [])
+        difficulty_performance = {}
+        
+        for q in questions:
+            difficulty = q.get('difficulty', 'unknown')
+            if difficulty not in difficulty_performance:
+                difficulty_performance[difficulty] = {
+                    'total': 0,
+                    'correct': 0,
+                    'incorrect': 0,
+                    'skipped': 0,
+                    'avg_response_time': 0,
+                    'response_times': []
+                }
+            
+            difficulty_performance[difficulty]['total'] += 1
+        
+        for a in answers:
+            q_id = a.get('question_id', '')
+            matching_questions = [q for q in questions if q.get('id', '') == q_id]
+            
+            if not matching_questions:
+                continue
+            
+            q = matching_questions[0]
+            difficulty = q.get('difficulty', 'unknown')
+            
+            if a.get('user_answer') == 'SKIPPED':
+                difficulty_performance[difficulty]['skipped'] += 1
+            elif a.get('is_correct', False):
+                difficulty_performance[difficulty]['correct'] += 1
+                difficulty_performance[difficulty]['response_times'].append(a.get('response_time', 0))
+            else:
+                difficulty_performance[difficulty]['incorrect'] += 1
+                difficulty_performance[difficulty]['response_times'].append(a.get('response_time', 0))
+        
+        # Calculate average response times by difficulty
+        for difficulty, data in difficulty_performance.items():
+            if data['response_times']:
+                data['avg_response_time'] = sum(data['response_times']) / len(data['response_times'])
+            del data['response_times']  # Remove the raw data
+        
+        results['question_difficulty_analysis'] = difficulty_performance
+        
+        # Category performance analysis
+        category_performance = {}
+        
+        for q in questions:
+            category = q.get('category', 'unknown')
+            if category not in category_performance:
+                category_performance[category] = {
+                    'total': 0,
+                    'correct': 0,
+                    'incorrect': 0,
+                    'skipped': 0,
+                    'avg_response_time': 0,
+                    'response_times': []
+                }
+            
+            category_performance[category]['total'] += 1
+        
+        for a in answers:
+            q_id = a.get('question_id', '')
+            matching_questions = [q for q in questions if q.get('id', '') == q_id]
+            
+            if not matching_questions:
+                continue
+            
+            q = matching_questions[0]
+            category = q.get('category', 'unknown')
+            
+            if a.get('user_answer') == 'SKIPPED':
+                category_performance[category]['skipped'] += 1
+            elif a.get('is_correct', False):
+                category_performance[category]['correct'] += 1
+                category_performance[category]['response_times'].append(a.get('response_time', 0))
+            else:
+                category_performance[category]['incorrect'] += 1
+                category_performance[category]['response_times'].append(a.get('response_time', 0))
+        
+        # Calculate average response times by category
+        for category, data in category_performance.items():
+            if data['response_times']:
+                data['avg_response_time'] = sum(data['response_times']) / len(data['response_times'])
+            del data['response_times']  # Remove the raw data
+        
+        results['category_performance'] = category_performance
+        
+        # Time trend analysis
+        if len(answers) > 1:
+            # Sort answers by timestamp
+            sorted_answers = sorted(answers, key=lambda a: a.get('timestamp', ''))
+            
+            # Analyze performance over time
+            time_segments = min(5, len(sorted_answers))  # Divide into up to 5 segments
+            segment_size = len(sorted_answers) // time_segments
+            
+            time_trend = []
+            for i in range(time_segments):
+                start_idx = i * segment_size
+                end_idx = start_idx + segment_size if i < time_segments - 1 else len(sorted_answers)
+                segment_answers = sorted_answers[start_idx:end_idx]
+                
+                correct = sum(1 for a in segment_answers if a.get('is_correct', False))
+                total = len(segment_answers)
+                avg_time = sum(a.get('response_time', 0) for a in segment_answers) / total if total > 0 else 0
+                
+                time_trend.append({
+                    'segment': i + 1,
+                    'correct': correct,
+                    'total': total,
+                    'accuracy': (correct / total * 100) if total > 0 else 0,
+                    'avg_response_time': avg_time
+                })
+            
+            results['time_trend_analysis'] = time_trend
+        
+        return results
+    
+    def register_callback(self, event_type: str, callback: Callable) -> None:
+        """Register a callback function for a specific event type
+        
+        Args:
+            event_type: Type of event to register for
+            callback: Callback function to call when the event occurs
         """
         if event_type not in self.task_callbacks:
             self.task_callbacks[event_type] = []
         
         self.task_callbacks[event_type].append(callback)
-        self.logger.debug(f"Registered callback for event '{event_type}'")
-    
-    def _trigger_callbacks(self, event_type: str, **kwargs) -> None:
-        """
-        Trigger registered callbacks for an event
+        
+    def unregister_callback(self, event_type: str, callback: Callable) -> None:
+        """Unregister a callback function
         
         Args:
-            event_type: Event type
-            **kwargs: Additional arguments to pass to callbacks
+            event_type: Type of event the callback was registered for
+            callback: Callback function to unregister
         """
         if event_type in self.task_callbacks:
-            for callback in self.task_callbacks[event_type]:
-                try:
-                    callback(**kwargs)
-                except Exception as e:
-                    self.logger.error(f"Error in callback for event '{event_type}': {e}")
+            if callback in self.task_callbacks[event_type]:
+                self.task_callbacks[event_type].remove(callback)
     
-    def create_task(self, task_type: str, **kwargs) -> Dict[str, Any]:
+    def is_task_active(self) -> bool:
         """
-        Create a new task configuration
+        Check if a task is currently active
+        
+        Returns:
+            True if a task is active, False otherwise
+        """
+        return self.current_task is not None
+    
+    def get_task_progress(self, task_id: str = None) -> Dict[str, Any]:
+        """
+        Get the current task progress
         
         Args:
-            task_type: Type of task (e.g., 'question_set', 'alert_simulation')
-            **kwargs: Additional task parameters
+            task_id: Optional task ID (not used in current implementation, but kept for API compatibility)
             
         Returns:
-            Task configuration dictionary
+            Dictionary with progress information
         """
-        # Generate task ID
-        task_id = f"task_{uuid.uuid4().hex[:8]}"
-        
-        # Set default parameters
-        duration = kwargs.get('duration', self.default_duration)
-        difficulty = kwargs.get('difficulty', self.default_difficulty)
-        
-        # Create base task configuration
-        task_config = {
-            'task_id': task_id,
-            'task_type': task_type,
-            'duration': duration,
-            'difficulty': difficulty,
-            'created_at': datetime.now().isoformat()
-        }
-        
-        # Add task-specific configuration
-        if task_type == 'question_set':
-            question_set = kwargs.get('question_set', self.task_config.get('default_question_set', 'general'))
-            num_questions = kwargs.get('num_questions', 10)
-            
-            # Validate question set
-            if question_set not in self.question_sets:
-                self.logger.warning(f"Question set '{question_set}' not found, using default")
-                question_set = self.task_config.get('default_question_set', 'general')
-            
-            # Select questions based on difficulty
-            available_questions = self.question_sets.get(question_set, [])
-            if difficulty != 'mixed':
-                available_questions = [q for q in available_questions if q.get('difficulty') == difficulty]
-            
-            # If not enough questions of the specified difficulty, include other difficulties
-            if len(available_questions) < num_questions:
-                self.logger.warning(f"Not enough questions with difficulty '{difficulty}', including other difficulties")
-                available_questions = self.question_sets.get(question_set, [])
-            
-            # Randomly select questions
-            selected_questions = random.sample(
-                available_questions, 
-                min(num_questions, len(available_questions))
-            )
-            
-            # Add to task configuration
-            task_config.update({
-                'question_set': question_set,
-                'questions': selected_questions,
-                'num_questions': len(selected_questions),
-                'time_per_question': duration / max(1, len(selected_questions))
-            })
-        
-        elif task_type == 'alert_simulation':
-            alert_type = kwargs.get('alert_type', 'security_incident')
-            num_alerts = kwargs.get('num_alerts', 5)
-            
-            # Generate simulated alerts
-            alerts = self._generate_simulated_alerts(alert_type, num_alerts, difficulty)
-            
-            # Add to task configuration
-            task_config.update({
-                'alert_type': alert_type,
-                'alerts': alerts,
-                'num_alerts': len(alerts),
-                'time_per_alert': duration / max(1, len(alerts))
-            })
-        
-        # Add any additional parameters
-        for key, value in kwargs.items():
-            if key not in task_config:
-                task_config[key] = value
-        
-        self.logger.info(f"Created {task_type} task with ID {task_id}")
-        return task_config
-    
-    def _generate_simulated_alerts(self, alert_type: str, num_alerts: int, difficulty: str) -> List[Dict[str, Any]]:
-        """
-        Generate simulated security alerts for alert simulation tasks
-        
-        Args:
-            alert_type: Type of alerts to generate
-            num_alerts: Number of alerts to generate
-            difficulty: Difficulty level
-            
-        Returns:
-            List of simulated alert dictionaries
-        """
-        alerts = []
-        
-        # Alert templates based on type and difficulty
-        alert_templates = {
-            'security_incident': {
-                'easy': [
-                    {
-                        'title': 'Failed Login Attempts',
-                        'description': 'Multiple failed login attempts detected for user {user} from IP {ip}.',
-                        'severity': 'Medium',
-                        'source': 'Authentication System',
-                        'indicators': ['Multiple authentication failures', 'Known suspicious IP']
-                    },
-                    {
-                        'title': 'Malware Detected',
-                        'description': 'Antivirus detected {malware_type} on host {hostname}.',
-                        'severity': 'High',
-                        'source': 'Endpoint Protection',
-                        'indicators': ['Malicious file detected', 'Known malware signature']
-                    }
-                ],
-                'medium': [
-                    {
-                        'title': 'Unusual Network Traffic',
-                        'description': 'Unusual outbound traffic detected from {hostname} to {destination_ip} on port {port}.',
-                        'severity': 'Medium',
-                        'source': 'Network IDS',
-                        'indicators': ['Unusual destination', 'High volume of traffic', 'Non-business hours']
-                    },
-                    {
-                        'title': 'Potential Data Exfiltration',
-                        'description': 'Large file transfer detected from {hostname} to external domain {domain}.',
-                        'severity': 'High',
-                        'source': 'DLP System',
-                        'indicators': ['Large file transfer', 'Sensitive data pattern match', 'Unusual destination']
-                    }
-                ],
-                'hard': [
-                    {
-                        'title': 'Potential Lateral Movement',
-                        'description': 'User {user} accessed multiple systems ({systems}) within a short time period.',
-                        'severity': 'High',
-                        'source': 'SIEM Correlation',
-                        'indicators': ['Access to multiple systems', 'Privileged account usage', 'After hours activity']
-                    },
-                    {
-                        'title': 'Suspicious PowerShell Execution',
-                        'description': 'Encoded PowerShell command executed on {hostname} by user {user}.',
-                        'severity': 'Critical',
-                        'source': 'EDR',
-                        'indicators': ['Encoded command', 'PowerShell execution', 'Privilege escalation attempt']
-                    }
-                ]
-            }
-        }
-        
-        # Select templates based on alert type and difficulty
-        if alert_type in alert_templates and difficulty in alert_templates[alert_type]:
-            templates = alert_templates[alert_type][difficulty]
-        else:
-            # Fallback to all templates for the alert type
-            templates = []
-            for diff in alert_templates.get(alert_type, {}):
-                templates.extend(alert_templates[alert_type][diff])
-        
-        # Generate alerts using templates
-        for i in range(num_alerts):
-            # Select a random template
-            template = random.choice(templates)
-            
-            # Generate random values for placeholders
-            users = ['admin', 'jsmith', 'aharris', 'mwilliams', 'dthompson']
-            ips = ['192.168.1.100', '10.0.0.15', '172.16.5.10', '8.8.8.8', '203.0.113.42']
-            hostnames = ['DESKTOP-A1B2C3', 'SERVER-X1Y2Z3', 'LAPTOP-USER1', 'WORKSTATION-5', 'DC-PRIMARY']
-            domains = ['example.com', 'filestore.net', 'datacloud.org', 'transfer.io', 'share-docs.com']
-            malware_types = ['Trojan.Generic', 'Ransomware.Cryptolocker', 'Backdoor.Access', 'Spyware.Logger', 'Worm.Spread']
-            ports = [22, 80, 443, 445, 3389, 8080]
-            systems = ['FileServer', 'DatabaseServer', 'DomainController', 'WebServer', 'EmailServer']
-            
-            # Create alert from template
-            alert = template.copy()
-            
-            # Replace placeholders with random values
-            for key, value in alert.items():
-                if isinstance(value, str):
-                    value = value.replace('{user}', random.choice(users))
-                    value = value.replace('{ip}', random.choice(ips))
-                    value = value.replace('{hostname}', random.choice(hostnames))
-                    value = value.replace('{destination_ip}', random.choice(ips))
-                    value = value.replace('{domain}', random.choice(domains))
-                    value = value.replace('{malware_type}', random.choice(malware_types))
-                    value = value.replace('{port}', str(random.choice(ports)))
-                    value = value.replace('{systems}', ', '.join(random.sample(systems, random.randint(2, 4))))
-                    alert[key] = value
-            
-            # Add unique ID and timestamp
-            alert['id'] = f"alert_{uuid.uuid4().hex[:6]}"
-            alert['timestamp'] = (datetime.now() - timedelta(minutes=random.randint(5, 60))).isoformat()
-            
-            alerts.append(alert)
-        
-        return alerts
-    
-    def start_task(self, task_config: Dict[str, Any]) -> bool:
-        """
-        Start a task with the given configuration
-        
-        Args:
-            task_config: Task configuration dictionary
-            
-        Returns:
-            True if task started successfully, False otherwise
-        """
-        if self.current_task is not None:
-            self.logger.warning("Cannot start task: Another task is already running")
-            return False
-        
-        # Set current task and start time
-        self.current_task = task_config
-        self.task_start_time = datetime.now()
-        self.task_end_time = self.task_start_time + timedelta(seconds=task_config.get('duration', self.default_duration))
-        
-        # Trigger task start callbacks
-        self._trigger_callbacks('task_start', task_config=task_config)
-        
-        self.logger.info(f"Task started: {task_config.get('task_id')} (type: {task_config.get('task_type')})")
-        return True
-    
-    def end_task(self) -> Optional[Dict[str, Any]]:
-        """
-        End the current task
-        
-        Returns:
-            Task results dictionary, or None if no task is running
-        """
-        if self.current_task is None:
-            self.logger.warning("Cannot end task: No task is running")
+        if not self.current_task:
             return None
         
-        # Calculate task duration
-        end_time = datetime.now()
-        duration = (end_time - self.task_start_time).total_seconds()
-        
-        # Create task results
-        task_results = {
-            'task_id': self.current_task.get('task_id'),
-            'task_type': self.current_task.get('task_type'),
-            'start_time': self.task_start_time.isoformat(),
-            'end_time': end_time.isoformat(),
-            'duration': duration,
-            'completed': True
-        }
-        
-        # Trigger task end callbacks
-        self._trigger_callbacks('task_end', task_results=task_results)
-        
-        # Clear current task
-        self.current_task = None
-        self.task_start_time = None
-        self.task_end_time = None
-        
-        self.logger.info(f"Task ended: {task_results.get('task_id')} (duration: {duration:.2f}s)")
-        return task_results
-    
-    def get_remaining_time(self) -> Optional[float]:
-        """
-        Get the remaining time for the current task in seconds
-        
-        Returns:
-            Remaining time in seconds, or None if no task is running
-        """
-        if self.current_task is None or self.task_end_time is None:
-            return None
-        
-        remaining = (self.task_end_time - datetime.now()).total_seconds()
-        return max(0, remaining)
-    
-    def get_task_progress(self) -> Dict[str, Any]:
-        """
-        Get the progress of the current task
-        
-        Returns:
-            Dictionary with task progress information
-        """
-        if self.current_task is None:
-            return {'running': False}
-        
-        # Calculate elapsed and remaining time
-        elapsed = (datetime.now() - self.task_start_time).total_seconds()
-        remaining = self.get_remaining_time() or 0
-        total_duration = self.current_task.get('duration', self.default_duration)
+        current_index = self.current_task.get('current_question_index', 0)
+        total_questions = len(self.current_task.get('questions', []))
         
         # Calculate progress percentage
-        progress_pct = min(100, (elapsed / total_duration) * 100) if total_duration > 0 else 0
+        progress = current_index / total_questions if total_questions > 0 else 0
+        
+        # Calculate remaining time
+        remaining_time = self.get_task_time_remaining()
         
         return {
-            'running': True,
-            'task_id': self.current_task.get('task_id'),
-            'task_type': self.current_task.get('task_type'),
-            'elapsed_time': elapsed,
-            'remaining_time': remaining,
-            'progress_percent': progress_pct
+            'progress': progress,
+            'items_completed': current_index,
+            'items_total': total_questions,
+            'remaining_time': remaining_time,
+            'is_complete': current_index >= total_questions
         }
     
-    def record_answer(self, question_id: str, answer: str) -> Dict[str, Any]:
+    def get_performance_metrics(self) -> Dict[str, Any]:
         """
-        Record a user's answer to a question
+        Get performance metrics for the current or most recent task
         
-        Args:
-            question_id: ID of the question being answered
-            answer: User's answer
-            
         Returns:
-            Dictionary with answer results
-            
-        Raises:
-            RuntimeError: If no task is running or task is not a question set
+            Dictionary of performance metrics
         """
-        if self.current_task is None:
-            raise RuntimeError("No task is running")
+        # If there's an active task, return its metrics
+        if self.current_task:
+            metrics = self.current_task.get('metrics', {})
+            
+            # Calculate additional metrics if needed
+            total_questions = len(self.current_task.get('questions', []))
+            answered_questions = metrics.get('correct_answers', 0) + metrics.get('incorrect_answers', 0)
+            
+            # Calculate accuracy
+            if answered_questions > 0:
+                accuracy = (metrics.get('correct_answers', 0) / answered_questions) * 100
+            else:
+                accuracy = 0
+            
+            # Calculate completion percentage
+            completion_rate = ((answered_questions + metrics.get('skipped_questions', 0)) / total_questions) * 100 if total_questions > 0 else 0
+            
+            return {
+                'accuracy': accuracy,
+                'completion_rate': completion_rate,
+                'avg_response_time': metrics.get('average_response_time', 0),
+                'correct_answers': metrics.get('correct_answers', 0),
+                'incorrect_answers': metrics.get('incorrect_answers', 0),
+                'skipped_questions': metrics.get('skipped_questions', 0),
+                'total_questions': total_questions,
+                'task_active': True,
+                'difficulty': self.current_task.get('difficulty', 'medium')
+            }
         
-        if self.current_task.get('task_type') != 'question_set':
-            raise RuntimeError(f"Current task is not a question set: {self.current_task.get('task_type')}")
-        
-        # Find the question
-        question = None
-        for q in self.current_task.get('questions', []):
-            if q.get('id') == question_id:
-                question = q
-                break
-        
-        if question is None:
-            self.logger.warning(f"Question not found: {question_id}")
-            return {'success': False, 'error': 'Question not found'}
-        
-        # Check if answer is correct
-        correct = answer == question.get('correct_answer')
-        
-        # Calculate response time
-        response_time = None
-        if 'displayed_at' in question:
-            displayed_at = datetime.fromisoformat(question['displayed_at'])
-            response_time = (datetime.now() - displayed_at).total_seconds()
-        
-        # Create answer result
-        result = {
-            'question_id': question_id,
-            'answer': answer,
-            'correct': correct,
-            'response_time': response_time,
-            'timestamp': datetime.now().isoformat()
+        # If no active task, return empty metrics
+        return {
+            'accuracy': 0,
+            'completion_rate': 0,
+            'avg_response_time': 0,
+            'correct_answers': 0,
+            'incorrect_answers': 0,
+            'skipped_questions': 0,
+            'total_questions': 0,
+            'task_active': False,
+            'difficulty': 'none'
         }
-        
-        # Add to question data
-        question['answer'] = answer
-        question['correct'] = correct
-        question['response_time'] = response_time
-        question['answered_at'] = result['timestamp']
-        
-        # Trigger answer callbacks
-        self._trigger_callbacks('question_answered', question=question, result=result)
-        
-        return result
     
-    def record_alert_action(self, alert_id: str, action: str, notes: Optional[str] = None) -> Dict[str, Any]:
+    def get_task_metrics(self) -> Dict[str, Any]:
         """
-        Record a user's action for an alert
-        
-        Args:
-            alert_id: ID of the alert
-            action: Action taken (e.g., 'escalate', 'dismiss', 'investigate')
-            notes: Optional notes about the action
-            
-        Returns:
-            Dictionary with action results
-            
-        Raises:
-            RuntimeError: If no task is running or task is not an alert simulation
-        """
-        if self.current_task is None:
-            raise RuntimeError("No task is running")
-        
-        if self.current_task.get('task_type') != 'alert_simulation':
-            raise RuntimeError(f"Current task is not an alert simulation: {self.current_task.get('task_type')}")
-        
-        # Find the alert
-        alert = None
-        for a in self.current_task.get('alerts', []):
-            if a.get('id') == alert_id:
-                alert = a
-                break
-        
-        if alert is None:
-            self.logger.warning(f"Alert not found: {alert_id}")
-            return {'success': False, 'error': 'Alert not found'}
-        
-        # Calculate response time
-        response_time = None
-        if 'displayed_at' in alert:
-            displayed_at = datetime.fromisoformat(alert['displayed_at'])
-            response_time = (datetime.now() - displayed_at).total_seconds()
-        
-        # Create action result
-        result = {
-            'alert_id': alert_id,
-            'action': action,
-            'notes': notes,
-            'response_time': response_time,
-            'timestamp': datetime.now().isoformat()
-        }
-        
-        # Add to alert data
-        alert['action'] = action
-        alert['notes'] = notes
-        alert['response_time'] = response_time
-        alert['actioned_at'] = result['timestamp']
-        
-        # Trigger alert action callbacks
-        self._trigger_callbacks('alert_actioned', alert=alert, result=result)
-        
-        return result
-    
-    def mark_item_displayed(self, item_id: str, item_type: str) -> None:
-        """
-        Mark a question or alert as displayed to the user
-        
-        Args:
-            item_id: ID of the item (question or alert)
-            item_type: Type of item ('question' or 'alert')
-            
-        Raises:
-            RuntimeError: If no task is running or item type is invalid
-        """
-        if self.current_task is None:
-            raise RuntimeError("No task is running")
-        
-        if item_type == 'question':
-            if self.current_task.get('task_type') != 'question_set':
-                raise RuntimeError("Current task is not a question set")
-            
-            # Find the question and mark as displayed
-            for q in self.current_task.get('questions', []):
-                if q.get('id') == item_id:
-                    q['displayed_at'] = datetime.now().isoformat()
-                    break
-        
-        elif item_type == 'alert':
-            if self.current_task.get('task_type') != 'alert_simulation':
-                raise RuntimeError("Current task is not an alert simulation")
-            
-            # Find the alert and mark as displayed
-            for a in self.current_task.get('alerts', []):
-                if a.get('id') == item_id:
-                    a['displayed_at'] = datetime.now().isoformat()
-                    break
-        
-        else:
-            raise RuntimeError(f"Invalid item type: {item_type}")
-    
-    def get_task_results(self) -> Dict[str, Any]:
-        """
-        Get results for the current task
+        Get the current task metrics
         
         Returns:
-            Dictionary with task results
-            
-        Raises:
-            RuntimeError: If no task is running
+            Dictionary of task metrics
         """
-        if self.current_task is None:
-            raise RuntimeError("No task is running")
+        if not self.current_task:
+            return {}
         
-        # Create base results
+        return self.current_task.get('metrics', {})
+    
+    def get_task_time_remaining(self) -> int:
+        """
+        Get the time remaining for the current task in seconds
+        
+        Returns:
+            Time remaining in seconds, or 0 if no task is active
+        """
+        if not self.current_task or not self.task_end_time:
+            return 0
+        
+        now = datetime.now()
+        if now > self.task_end_time:
+            return 0
+        
+        return int((self.task_end_time - now).total_seconds())
+    
+    def get_task_elapsed_time(self) -> int:
+        """
+        Get the elapsed time for the current task in seconds
+        
+        Returns:
+            Elapsed time in seconds, or 0 if no task is active
+        """
+        if not self.current_task or not self.task_start_time:
+            return 0
+        
+        now = datetime.now()
+        return int((now - self.task_start_time).total_seconds())
+    
+    def analyze_task_results(self, task_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Analyze task results to extract insights
+        
+        Args:
+            task_data: Task data dictionary
+            
+        Returns:
+            Analysis results dictionary
+        """
+        if not task_data:
+            return {'error': 'No task data provided'}
+        
+        # Extract basic metrics
+        metrics = task_data.get('metrics', {})
+        answers = task_data.get('answers', [])
+        
+        # Initialize results
         results = {
-            'task_id': self.current_task.get('task_id'),
-            'task_type': self.current_task.get('task_type'),
-            'start_time': self.task_start_time.isoformat() if self.task_start_time else None,
-            'elapsed_time': (datetime.now() - self.task_start_time).total_seconds() if self.task_start_time else None
+            'task_id': task_data.get('id', ''),
+            'question_set': task_data.get('question_set', ''),
+            'difficulty': task_data.get('difficulty', ''),
+            'basic_metrics': metrics,
+            'response_time_analysis': {},
+            'question_difficulty_analysis': {},
+            'category_performance': {},
+            'time_trend_analysis': {}
         }
         
-        # Add task-specific results
-        if self.current_task.get('task_type') == 'question_set':
-            # Calculate question statistics
-            questions = self.current_task.get('questions', [])
-            answered = [q for q in questions if 'answer' in q]
-            correct = [q for q in answered if q.get('correct', False)]
-            
-            results.update({
-                'total_questions': len(questions),
-                'answered_questions': len(answered),
-                'correct_answers': len(correct),
-                'accuracy': len(correct) / len(answered) if answered else 0,
-                'average_response_time': sum(q.get('response_time', 0) for q in answered) / len(answered) if answered else 0
-            })
+        # Skip further analysis if no answers
+        if not answers:
+            return results
         
-        elif self.current_task.get('task_type') == 'alert_simulation':
-            # Calculate alert statistics
-            alerts = self.current_task.get('alerts', [])
-            actioned = [a for a in alerts if 'action' in a]
+        # Response time analysis
+        response_times = [a.get('response_time', 0) for a in answers if a.get('user_answer') != 'SKIPPED']
+        if response_times:
+            results['response_time_analysis'] = {
+                'min': min(response_times),
+                'max': max(response_times),
+                'mean': sum(response_times) / len(response_times),
+                'median': sorted(response_times)[len(response_times) // 2],
+                'total': sum(response_times)
+            }
+        
+        # Question difficulty analysis
+        questions = task_data.get('questions', [])
+        difficulty_performance = {}
+        
+        for q in questions:
+            difficulty = q.get('difficulty', 'unknown')
+            if difficulty not in difficulty_performance:
+                difficulty_performance[difficulty] = {
+                    'total': 0,
+                    'correct': 0,
+                    'incorrect': 0,
+                    'skipped': 0,
+                    'avg_response_time': 0,
+                    'response_times': []
+                }
             
-            # Count actions by type
-            action_counts = {}
-            for alert in actioned:
-                action = alert.get('action', 'unknown')
-                action_counts[action] = action_counts.get(action, 0) + 1
+            difficulty_performance[difficulty]['total'] += 1
+        
+        for a in answers:
+            q_id = a.get('question_id', '')
+            matching_questions = [q for q in questions if q.get('id', '') == q_id]
             
-            results.update({
-                'total_alerts': len(alerts),
-                'actioned_alerts': len(actioned),
-                'action_counts': action_counts,
-                'average_response_time': sum(a.get('response_time', 0) for a in actioned) / len(actioned) if actioned else 0
-            })
+            if not matching_questions:
+                continue
+            
+            q = matching_questions[0]
+            difficulty = q.get('difficulty', 'unknown')
+            
+            if a.get('user_answer') == 'SKIPPED':
+                difficulty_performance[difficulty]['skipped'] += 1
+            elif a.get('is_correct', False):
+                difficulty_performance[difficulty]['correct'] += 1
+                difficulty_performance[difficulty]['response_times'].append(a.get('response_time', 0))
+            else:
+                difficulty_performance[difficulty]['incorrect'] += 1
+                difficulty_performance[difficulty]['response_times'].append(a.get('response_time', 0))
+        
+        # Calculate average response times by difficulty
+        for difficulty, data in difficulty_performance.items():
+            if data['response_times']:
+                data['avg_response_time'] = sum(data['response_times']) / len(data['response_times'])
+            del data['response_times']  # Remove the raw data
+        
+        results['question_difficulty_analysis'] = difficulty_performance
+        
+        # Category performance analysis
+        category_performance = {}
+        
+        for q in questions:
+            category = q.get('category', 'unknown')
+            if category not in category_performance:
+                category_performance[category] = {
+                    'total': 0,
+                    'correct': 0,
+                    'incorrect': 0,
+                    'skipped': 0,
+                    'avg_response_time': 0,
+                    'response_times': []
+                }
+            
+            category_performance[category]['total'] += 1
+        
+        for a in answers:
+            q_id = a.get('question_id', '')
+            matching_questions = [q for q in questions if q.get('id', '') == q_id]
+            
+            if not matching_questions:
+                continue
+            
+            q = matching_questions[0]
+            category = q.get('category', 'unknown')
+            
+            if a.get('user_answer') == 'SKIPPED':
+                category_performance[category]['skipped'] += 1
+            elif a.get('is_correct', False):
+                category_performance[category]['correct'] += 1
+                category_performance[category]['response_times'].append(a.get('response_time', 0))
+            else:
+                category_performance[category]['incorrect'] += 1
+                category_performance[category]['response_times'].append(a.get('response_time', 0))
+        
+        # Calculate average response times by category
+        for category, data in category_performance.items():
+            if data['response_times']:
+                data['avg_response_time'] = sum(data['response_times']) / len(data['response_times'])
+            del data['response_times']  # Remove the raw data
+        
+        results['category_performance'] = category_performance
+        
+        # Time trend analysis
+        if len(answers) > 1:
+            # Sort answers by timestamp
+            sorted_answers = sorted(answers, key=lambda a: a.get('timestamp', ''))
+            
+            # Analyze performance over time
+            time_segments = min(5, len(sorted_answers))  # Divide into up to 5 segments
+            segment_size = len(sorted_answers) // time_segments
+            
+            time_trend = []
+            for i in range(time_segments):
+                start_idx = i * segment_size
+                end_idx = start_idx + segment_size if i < time_segments - 1 else len(sorted_answers)
+                segment_answers = sorted_answers[start_idx:end_idx]
+                
+                correct = sum(1 for a in segment_answers if a.get('is_correct', False))
+                total = len(segment_answers)
+                avg_time = sum(a.get('response_time', 0) for a in segment_answers) / total if total > 0 else 0
+                
+                time_trend.append({
+                    'segment': i + 1,
+                    'correct': correct,
+                    'total': total,
+                    'accuracy': (correct / total * 100) if total > 0 else 0,
+                    'avg_response_time': avg_time
+                })
+            
+            results['time_trend_analysis'] = time_trend
         
         return results
+    
+    def register_callback(self, event_type: str, callback: Callable) -> None:
+        """Register a callback function for a specific event type
+        
+        Args:
+            event_type: Type of event to register for
+            callback: Callback function to call when the event occurs
+        """
+        if event_type not in self.task_callbacks:
+            self.task_callbacks[event_type] = []
+        
+        self.task_callbacks[event_type].append(callback)
+        
+    def unregister_callback(self, event_type: str, callback: Callable) -> None:
+        """Unregister a callback function
+        
+        Args:
+            event_type: Type of event the callback was registered for
+            callback: Callback function to unregister
+        """
+        if event_type in self.task_callbacks:
+            if callback in self.task_callbacks[event_type]:
+                self.task_callbacks[event_type].remove(callback)

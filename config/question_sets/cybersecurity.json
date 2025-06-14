@@ -1,0 +1,67 @@
+[
+    {
+        "id": "cyber_001",
+        "question": "Which of the following is NOT a common type of cyber attack?",
+        "options": [
+            "Phishing",
+            "SQL Injection",
+            "Quantum Tunneling",
+            "DDoS"
+        ],
+        "correct_answer": "Quantum Tunneling",
+        "difficulty": "easy",
+        "category": "attacks"
+    },
+    {
+        "id": "cyber_002",
+        "question": "What does SSL stand for?",
+        "options": [
+            "Secure Socket Layer",
+            "System Security Level",
+            "Secure System Login",
+            "Standard Security License"
+        ],
+        "correct_answer": "Secure Socket Layer",
+        "difficulty": "easy",
+        "category": "protocols"
+    },
+    {
+        "id": "cyber_003",
+        "question": "Which port is commonly used for HTTPS traffic?",
+        "options": [
+            "21",
+            "22",
+            "443",
+            "8080"
+        ],
+        "correct_answer": "443",
+        "difficulty": "medium",
+        "category": "networking"
+    },
+    {
+        "id": "cyber_004",
+        "question": "Which encryption algorithm is considered broken and should not be used?",
+        "options": [
+            "AES-256",
+            "RSA-2048",
+            "MD5",
+            "SHA-256"
+        ],
+        "correct_answer": "MD5",
+        "difficulty": "medium",
+        "category": "cryptography"
+    },
+    {
+        "id": "cyber_005",
+        "question": "What is the primary purpose of a firewall?",
+        "options": [
+            "Detect viruses",
+            "Filter network traffic",
+            "Encrypt data",
+            "Backup data"
+        ],
+        "correct_answer": "Filter network traffic",
+        "difficulty": "easy",
+        "category": "network_security"
+    }
+]

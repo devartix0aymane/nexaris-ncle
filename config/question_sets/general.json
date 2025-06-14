@@ -1,0 +1,67 @@
+[
+    {
+        "id": "gen_001",
+        "question": "What is 25 \u00d7 4?",
+        "options": [
+            "75",
+            "100",
+            "125",
+            "150"
+        ],
+        "correct_answer": "100",
+        "difficulty": "easy",
+        "category": "math"
+    },
+    {
+        "id": "gen_002",
+        "question": "Which of these is NOT a primary color?",
+        "options": [
+            "Red",
+            "Blue",
+            "Green",
+            "Yellow"
+        ],
+        "correct_answer": "Green",
+        "difficulty": "easy",
+        "category": "general_knowledge"
+    },
+    {
+        "id": "gen_003",
+        "question": "What is the capital of France?",
+        "options": [
+            "London",
+            "Berlin",
+            "Paris",
+            "Madrid"
+        ],
+        "correct_answer": "Paris",
+        "difficulty": "easy",
+        "category": "geography"
+    },
+    {
+        "id": "gen_004",
+        "question": "Solve for x: 3x + 7 = 22",
+        "options": [
+            "3",
+            "5",
+            "7",
+            "15"
+        ],
+        "correct_answer": "5",
+        "difficulty": "medium",
+        "category": "math"
+    },
+    {
+        "id": "gen_005",
+        "question": "Which planet is known as the Red Planet?",
+        "options": [
+            "Venus",
+            "Mars",
+            "Jupiter",
+            "Saturn"
+        ],
+        "correct_answer": "Mars",
+        "difficulty": "easy",
+        "category": "science"
+    }
+]

@@ -621,18 +621,17 @@ class TaskWidget(QWidget):
         time_limit = self.time_limit_spin.value()
         item_count = self.item_count_spin.value()
         
-        # Create task configuration
-        task_config = {
-            'type': task_type,
-            'question_set': question_set,
-            'difficulty': difficulty,
-            'time_limit': time_limit,
-            'item_count': item_count
-        }
-        
         # Start task
         try:
-            self.current_task_id = self.task_simulator.start_task(task_config)
+            # Pass individual parameters to match the TaskSimulator.start_task method signature
+            self.current_task_id = self.task_simulator.start_task(
+                task_type=task_type,
+                question_set=question_set,
+                difficulty=difficulty,
+                duration=time_limit,
+                num_questions=item_count
+            )
+            
             self.task_running = True
             self.task_start_time = time.time()
             self.task_items_completed = 0
@@ -691,7 +690,7 @@ class TaskWidget(QWidget):
         
         # End task in simulator
         if self.task_simulator and self.current_task_id:
-            self.task_simulator.end_task(self.current_task_id)
+            self.task_simulator.cancel_task()
         
         # Update UI
         self.task_running = False
