@@ -122,7 +122,7 @@ class TimeSeriesChart(QWidget):
         super().__init__(parent)
         self.values = []
         self.timestamps = []
-        self.max_points = 100
+        self.max_points = 3600  # Store up to 1 hour of data (1 point/sec)
         self.setMinimumSize(300, 200)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         
@@ -154,6 +154,19 @@ class TimeSeriesChart(QWidget):
         
         # Adjust layout
         self.figure.tight_layout()
+
+    def export_chart(self, file_path: str) -> None:
+        """
+        Export the current chart to an image file.
+
+        Args:
+            file_path: The path to save the image file.
+        """
+        try:
+            self.figure.savefig(file_path, dpi=300, bbox_inches='tight')
+            self.logger.info(f"Chart exported to {file_path}")
+        except Exception as e:
+            self.logger.error(f"Error exporting chart: {e}")
     
     def add_value(self, value: float) -> None:
         """
@@ -636,6 +649,11 @@ class DashboardWidget(QWidget):
         self.export_data_button = QPushButton("Export Data")
         self.export_data_button.clicked.connect(self.on_export_data_clicked)
         self.button_layout.addWidget(self.export_data_button)
+
+        # Create export session graph button
+        self.export_session_graph_button = QPushButton("Export Session Graph")
+        self.export_session_graph_button.clicked.connect(self.on_export_session_graph_clicked)
+        self.button_layout.addWidget(self.export_session_graph_button)
         
         self.main_layout.addLayout(self.button_layout)
     
@@ -770,6 +788,41 @@ class DashboardWidget(QWidget):
                 parent.on_new_session()
                 break
             parent = parent.parent()
+
+    @pyqtSlot()
+    def on_export_session_graph_clicked(self) -> None:
+        """
+        Handle export session graph button click.
+        Exports the time series chart of cognitive load.
+        """
+        if not self.time_series_chart:
+            self.logger.warning("Time series chart is not available for export.")
+            return
+
+        # Ensure assets directory exists
+        assets_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'assets')
+        os.makedirs(assets_dir, exist_ok=True)
+
+        # Generate filename with timestamp
+        timestamp = time.strftime("%Y%m%d-%H%M%S")
+        session_id_part = "unknown_session"
+        if self.cognitive_load_calculator and hasattr(self.cognitive_load_calculator, 'session_id') and self.cognitive_load_calculator.session_id:
+            session_id_part = self.cognitive_load_calculator.session_id
+        elif hasattr(self, 'session_info_panel') and self.session_info_panel.session_id_label.text() != "N/A":
+            session_id_part = self.session_info_panel.session_id_label.text()
+        
+        file_name = f"cognitive_load_session_{session_id_part}_{timestamp}.png"
+        file_path = os.path.join(assets_dir, file_name)
+
+        self.time_series_chart.export_chart(file_path)
+        # Optionally, inform the user via a dialog or status bar message
+        # For example, using QMessageBox:
+        # msg_box = QMessageBox()
+        # msg_box.setIcon(QMessageBox.Information)
+        # msg_box.setText(f"Session graph exported to: {file_path}")
+        # msg_box.setWindowTitle("Export Successful")
+        # msg_box.setStandardButtons(QMessageBox.Ok)
+        # msg_box.exec_()
     
     @pyqtSlot()
     def on_start_task_clicked(self) -> None:

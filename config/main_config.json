@@ -1,0 +1,90 @@
+{
+  "application_name": "NEXARIS CLE",
+  "version": "0.2.0-dev",
+  "logging": {
+    "level": "INFO",
+    "file_path": "logs/app.log",
+    "max_size_bytes": 10485760,
+    "backup_count": 5
+  },
+  "data_management": {
+    "default_session_path": "data/sessions",
+    "auto_save_interval_seconds": 300,
+    "export_format": "json_lines"
+  },
+  "ui": {
+    "theme": "dark",
+    "default_fullscreen": false,
+    "show_camera_feed_by_default": true
+  },
+  "eeg_integration": {
+    "enabled": false,
+    "reader_type": "serial",
+    "serial_port": "COM3",
+    "baud_rate": 9600,
+    "ble_device_name": "EEG_Headset_XYZ",
+    "ble_service_uuid": "0000xxxx-0000-1000-8000-00805f9b34fb",
+    "ble_characteristic_uuid": "0000yyyy-0000-1000-8000-00805f9b34fb",
+    "data_file_path": "data/eeg_sample.csv",
+    "reconnect_attempts": 3,
+    "reconnect_delay_seconds": 5
+  },
+  "facial_analysis": {
+    "enabled": true,
+    "model_path": "models/haarcascade_frontalface_default.xml",
+    "emotion_model_path": "models/emotion_ferplus.onnx",
+    "update_interval_ms": 100
+  },
+  "cognitive_load_calculator": {
+    "algorithm": "weighted_average",
+    "weights": {
+      "behavioral_hesitation": 0.3,
+      "behavioral_task_performance": 0.2,
+      "facial_emotion_negative": 0.3,
+      "eeg_alpha_beta_ratio": 0.2
+    },
+    "threshold_warning": 70,
+    "threshold_critical": 85,
+    "smoothing_window_size": 5
+  },
+  "plugin_system": {
+    "enabled": true,
+    "plugin_directories": [
+      "src/plugins/core",
+      "src/plugins/community"
+    ],
+    "disabled_plugins": [
+      "example_sensor_alpha"
+    ]
+  },
+  "ml_module": {
+    "enabled": false,
+    "model_path": "data/models/cognitive_load_v1.joblib",
+    "training_data_path": "data/training_sets",
+    "auto_retrain_on_new_data": false,
+    "default_features": [
+      "hrv_sdnn", 
+      "eda_mean", 
+      "pupil_diameter_avg", 
+      "blink_freq", 
+      "task_accuracy",
+      "emotion_neutral_confidence",
+      "clicks_per_second"
+    ]
+  },
+  "remote_database": {
+    "enabled": false,
+    "type": "mongodb",
+    "connection_string_env_var": "MONGODB_URI",
+    "default_database_name": "nexaris_cle_prod",
+    "default_collection_name": "sessions_prod",
+    "sync_on_session_end": true,
+    "retry_attempts": 3
+  },
+  "cloud_dashboard": {
+    "enabled": false,
+    "framework": "streamlit",
+    "deployment_url": "https://dashboard.nexaris-cle.example.com",
+    "api_key_env_var": "DASHBOARD_API_KEY"
+  }
+}

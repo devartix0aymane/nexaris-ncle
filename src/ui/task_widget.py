@@ -418,7 +418,8 @@ class TaskWidget(QWidget):
         # Task type selection
         self.config_layout.addWidget(QLabel("Task Type:"), 0, 0)
         self.task_type_combo = QComboBox()
-        self.task_type_combo.addItems(["Question Set", "Alert Simulation"])
+        self.task_type_combo.addItems(["Question Set", "Alert Simulation", "Pressure Task"])
+        self.task_type_combo.currentTextChanged.connect(self.on_task_type_changed)
         self.config_layout.addWidget(self.task_type_combo, 0, 1)
         
         # Question set selection
@@ -449,7 +450,16 @@ class TaskWidget(QWidget):
         self.config_layout.addWidget(self.item_count_spin, 4, 1)
         
         # Add configuration group to main layout
+        # Per-question time limit (for pressure task)
+        self.pressure_time_label = QLabel("Question Time Limit (s):")
+        self.config_layout.addWidget(self.pressure_time_label, 5, 0)
+        self.pressure_time_spin = QSpinBox()
+        self.pressure_time_spin.setRange(5, 60) # e.g., 5-60 seconds per question
+        self.pressure_time_spin.setValue(15)
+        self.config_layout.addWidget(self.pressure_time_spin, 5, 1)
+
         self.main_layout.addWidget(self.config_group)
+        self.on_task_type_changed(self.task_type_combo.currentText()) # Initial hide/show
         
         # Create task control section
         self.control_layout = QHBoxLayout()
@@ -482,9 +492,14 @@ class TaskWidget(QWidget):
         # Progress info layout
         self.progress_info_layout = QHBoxLayout()
         
-        # Time remaining label
-        self.time_label = QLabel("Time Remaining: 00:00")
+        # Time remaining label (overall task)
+        self.time_label = QLabel("Task Time: 00:00")
         self.progress_info_layout.addWidget(self.time_label)
+
+        # Per-question countdown label (for pressure task)
+        self.question_countdown_label = QLabel("Question Time: 00")
+        self.progress_info_layout.addWidget(self.question_countdown_label)
+        self.question_countdown_label.setVisible(False) # Initially hidden
         
         # Items completed label
         self.items_label = QLabel("Items: 0/0")
@@ -529,6 +544,30 @@ class TaskWidget(QWidget):
         self.update_timer = QTimer(self)
         self.update_timer.timeout.connect(self.update_progress)
         self.update_timer.setInterval(100)  # 10 Hz
+
+    def on_task_type_changed(self, task_type: str) -> None:
+        """
+        Show/hide pressure task specific config options.
+        """
+        is_pressure_task = (task_type == "Pressure Task")
+        self.pressure_time_label.setVisible(is_pressure_task)
+        self.pressure_time_spin.setVisible(is_pressure_task)
+
+        # Hide question set and difficulty for alert simulation, or other specific types if needed
+        is_question_based_task = (task_type == "Question Set" or task_type == "Pressure Task")
+        self.question_set_combo.setEnabled(is_question_based_task)
+        self.difficulty_combo.setEnabled(is_question_based_task)
+        # self.item_count_spin.setEnabled(is_question_based_task) # Item count might still be relevant
+
+        if task_type == "Alert Simulation":
+            self.time_limit_spin.setEnabled(True) # Overall time limit for alerts
+            self.item_count_spin.setEnabled(True) # Number of alerts
+        elif is_pressure_task:
+            self.time_limit_spin.setEnabled(True) # Overall task time limit for pressure task
+            self.item_count_spin.setEnabled(True) # Number of questions for pressure task
+        else: # Question Set
+            self.time_limit_spin.setEnabled(True)
+            self.item_count_spin.setEnabled(True)
     
     def set_components(self, task_simulator, behavior_tracker) -> None:
         """
@@ -624,13 +663,29 @@ class TaskWidget(QWidget):
         # Start task
         try:
             # Pass individual parameters to match the TaskSimulator.start_task method signature
-            self.current_task_id = self.task_simulator.start_task(
-                task_type=task_type,
-                question_set=question_set,
-                difficulty=difficulty,
-                duration=time_limit,
-                num_questions=item_count
-            )
+            if task_type == "Pressure Task":
+                question_time_limit = self.pressure_time_spin.value()
+                self.current_task_id = self.task_simulator.start_pressure_task(
+                    question_set=question_set,
+                    difficulty=difficulty,
+                    num_questions=item_count,
+                    question_time_limit=question_time_limit,
+                    overall_time_limit=time_limit # Optional: overall time limit for the pressure task series
+                )
+                self.task_simulator.question_timeout.connect(self.on_question_timeout)
+                # Assuming TaskSimulator will have this signal for per-second updates
+                if hasattr(self.task_simulator, 'question_timer_updated'):
+                    self.task_simulator.question_timer_updated.connect(self.update_question_timer_display)
+                self.question_countdown_label.setVisible(True)
+            else:
+                self.current_task_id = self.task_simulator.start_task(
+                    task_type=task_type, # This will be 'Question Set' or 'Alert Simulation'
+                    question_set=question_set,
+                    difficulty=difficulty,
+                    duration=time_limit,
+                    num_questions=item_count
+                )
+                self.question_countdown_label.setVisible(False)
             
             self.task_running = True
             self.task_start_time = time.time()
@@ -646,12 +701,17 @@ class TaskWidget(QWidget):
             self.update_timer.start()
             
             # Show appropriate widget based on task type
-            if task_type == "Question Set":
+            if task_type == "Question Set" or task_type == "Pressure Task":
                 self.content_stack.setCurrentWidget(self.question_widget)
                 self.show_next_question()
             elif task_type == "Alert Simulation":
                 self.content_stack.setCurrentWidget(self.alert_widget)
                 self.show_next_alert()
+            
+            if task_type == "Pressure Task":
+                self.question_countdown_label.setVisible(True)
+            else:
+                self.question_countdown_label.setVisible(False)
             
             self.logger.info(f"Task started: {self.current_task_id}")
         except Exception as e:
@@ -699,6 +759,20 @@ class TaskWidget(QWidget):
         self.stop_button.setEnabled(False)
         self.config_group.setEnabled(True)
         self.content_stack.setCurrentWidget(self.empty_widget)
+        self.question_countdown_label.setVisible(False)
+        self.question_countdown_label.setText("Question Time: 00")
+
+        # Disconnect signals to avoid issues if task_simulator is None or task changes
+        if self.task_simulator:
+            try:
+                self.task_simulator.question_timeout.disconnect(self.on_question_timeout)
+            except TypeError: # Signal not connected
+                pass
+            if hasattr(self.task_simulator, 'question_timer_updated'):
+                try:
+                    self.task_simulator.question_timer_updated.disconnect(self.update_question_timer_display)
+                except TypeError: # Signal not connected
+                    pass
         
         self.logger.info(f"Task ended: {self.current_task_id}")
         self.current_task_id = ""
@@ -723,6 +797,13 @@ class TaskWidget(QWidget):
             question['text'],
             question.get('options')
         )
+        # For pressure tasks, the timer is handled by TaskSimulator's signal
+        # and update_question_timer_display. We just ensure label is visible.
+        if self.task_simulator.current_task and self.task_simulator.current_task.get('is_pressure_task'):
+            self.question_countdown_label.setVisible(True)
+            # Initial display before first timer tick from simulator
+            q_time_limit = self.task_simulator.current_task.get('current_question_time_limit', 0)
+            self.update_question_timer_display(q_time_limit)
     
     def show_next_alert(self) -> None:
         """
@@ -794,6 +875,30 @@ class TaskWidget(QWidget):
         
         # Show results
         self.show_results(results)
+
+    @pyqtSlot(int)
+    def update_question_timer_display(self, remaining_time: int) -> None:
+        """
+        Update the per-question countdown timer display.
+        """
+        if self.task_running and self.question_countdown_label.isVisible():
+            self.question_countdown_label.setText(f"Question Time: {remaining_time:02d}")
+
+    @pyqtSlot(str)
+    def on_question_timeout(self, question_id: str) -> None:
+        """
+        Handle question timeout signal from TaskSimulator.
+        """
+        if not self.task_running or not self.task_simulator:
+            return
+
+        self.logger.info(f"Question {question_id} timed out.")
+        # Optionally, show a brief message to the user
+        # QMessageBox.information(self, "Timeout", f"Time is up for question {question_id}!")
+        
+        # TaskSimulator already handles skipping the question and recording it.
+        # We just need to advance to the next question in the UI.
+        self.show_next_question()
     
     def on_time_up(self) -> None:
         """

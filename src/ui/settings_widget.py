@@ -106,6 +106,11 @@ class SettingsWidget(QWidget):
         self.data_tab = QWidget()
         self.tab_widget.addTab(self.data_tab, "Data Storage")
         self.setup_data_tab()
+
+        # Create system monitoring tab
+        self.system_monitoring_tab = QWidget()
+        self.tab_widget.addTab(self.system_monitoring_tab, "System Monitoring")
+        self.setup_system_monitoring_tab()
         
         # Set scroll area widget
         self.scroll_area.setWidget(self.scroll_content)
@@ -782,6 +787,41 @@ class SettingsWidget(QWidget):
         # Add spacer
         self.advanced_layout.addStretch()
     
+    def setup_system_monitoring_tab(self) -> None:
+        """
+        Set up the system monitoring settings tab
+        """
+        # Create layout
+        self.system_monitoring_layout = QVBoxLayout(self.system_monitoring_tab)
+        self.system_monitoring_layout.setContentsMargins(10, 10, 10, 10)
+        self.system_monitoring_layout.setSpacing(20)
+
+        # Create CPU monitoring group
+        self.cpu_monitoring_group = QGroupBox("CPU Monitoring")
+        self.cpu_monitoring_layout = QFormLayout(self.cpu_monitoring_group)
+
+        # Enable CPU monitoring
+        self.enable_cpu_monitoring_check = QCheckBox("Enable CPU usage monitoring")
+        self.cpu_monitoring_layout.addRow("", self.enable_cpu_monitoring_check)
+
+        # CPU warning threshold
+        self.cpu_warning_threshold_spin = QSpinBox()
+        self.cpu_warning_threshold_spin.setRange(1, 100)
+        self.cpu_warning_threshold_spin.setSuffix(" %")
+        self.cpu_monitoring_layout.addRow("Warning Threshold:", self.cpu_warning_threshold_spin)
+
+        # CPU check interval
+        self.cpu_check_interval_spin = QSpinBox()
+        self.cpu_check_interval_spin.setRange(100, 10000) # milliseconds
+        self.cpu_check_interval_spin.setSingleStep(100)
+        self.cpu_check_interval_spin.setSuffix(" ms")
+        self.cpu_monitoring_layout.addRow("Check Interval:", self.cpu_check_interval_spin)
+
+        self.system_monitoring_layout.addWidget(self.cpu_monitoring_group)
+
+        # Add spacer
+        self.system_monitoring_layout.addStretch()
+
     def setup_data_tab(self) -> None:
         """
         Set up the data storage settings tab
@@ -1019,6 +1059,12 @@ class SettingsWidget(QWidget):
         self.export_format_combo.setCurrentText(export_config.get('default_format', 'CSV'))
         self.include_metadata_check.setChecked(export_config.get('include_metadata', True))
         self.include_timestamps_check.setChecked(export_config.get('include_timestamps', True))
+
+        # System Monitoring settings
+        system_monitoring_config = self.config.get('system_monitoring', {})
+        self.enable_cpu_monitoring_check.setChecked(system_monitoring_config.get('enable_cpu_monitoring', True))
+        self.cpu_warning_threshold_spin.setValue(system_monitoring_config.get('cpu_warning_threshold', 80))
+        self.cpu_check_interval_spin.setValue(system_monitoring_config.get('cpu_check_interval', 5000))
     
     def get_settings(self) -> Dict[str, Any]:
         """
@@ -1184,6 +1230,13 @@ class SettingsWidget(QWidget):
                 'include_metadata': self.include_metadata_check.isChecked(),
                 'include_timestamps': self.include_timestamps_check.isChecked()
             }
+        }
+
+        # System Monitoring settings
+        settings['system_monitoring'] = {
+            'enable_cpu_monitoring': self.enable_cpu_monitoring_check.isChecked(),
+            'cpu_warning_threshold': self.cpu_warning_threshold_spin.value(),
+            'cpu_check_interval': self.cpu_check_interval_spin.value()
         }
         
         return settings

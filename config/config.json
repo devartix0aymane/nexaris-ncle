@@ -33,7 +33,7 @@
         "save_raw_data": true
     },
     "facial_analysis": {
-        "enabled": false,
+        "enabled": true,
         "camera_index": 0,
         "detection_interval": 500,
         "emotions_to_track": [

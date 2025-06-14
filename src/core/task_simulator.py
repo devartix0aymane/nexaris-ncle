@@ -34,6 +34,8 @@ class TaskSimulator(QObject):
     task_started = pyqtSignal(dict)
     task_completed = pyqtSignal(dict)
     task_progress = pyqtSignal(int, int)  # current, total
+    question_timeout = pyqtSignal(dict) # Emitted when a question's timer expires in a pressure task
+    question_timer_updated = pyqtSignal(int) # Emits remaining_time (seconds) for the current question in a pressure task
     
     def __init__(self, config: Dict[str, Any]):
         """
@@ -56,9 +58,27 @@ class TaskSimulator(QObject):
         self.current_task = None
         self.task_start_time = None
         self.task_end_time = None
+        self.question_timer = None # Timer for per-question countdown in pressure tasks
+        self.ui_update_timer = None # Timer for emitting per-second updates for UI
         self.task_callbacks = {}
         
         self.logger.info("Task Simulator initialized")
+
+    def _init_question_timer(self):
+        if self.question_timer:
+            self.question_timer.stop()
+            self.question_timer.deleteLater() # Ensure proper cleanup
+        self.question_timer = QTimer(self) # Parent it to self for auto-cleanup
+        self.question_timer.setSingleShot(True)
+        self.question_timer.setTimerType(Qt.PreciseTimer)
+        self.question_timer.timeout.connect(self._handle_question_timeout)
+
+        if self.ui_update_timer:
+            self.ui_update_timer.stop()
+            self.ui_update_timer.deleteLater()
+        self.ui_update_timer = QTimer(self) # Parent it to self
+        self.ui_update_timer.setTimerType(Qt.PreciseTimer)
+        self.ui_update_timer.timeout.connect(self._emit_question_time_update)
     
     def _load_question_sets(self) -> None:
         """
@@ -406,8 +426,8 @@ class TaskSimulator(QObject):
             'duration': duration,
             'start_time': self.task_start_time,
             'end_time': self.task_end_time,
-            'questions': selected_questions,
-            'current_question_index': 0,
+            'items': selected_questions, # Renamed from 'questions'
+            'current_item_index': 0,   # Renamed from 'current_question_index'
             'answers': [],
             'metrics': {
                 'correct_answers': 0,
@@ -421,9 +441,37 @@ class TaskSimulator(QObject):
         # Emit task started signal
         self.task_started.emit(self.current_task)
         
-        self.logger.info(f"Started task '{task_id}' with {len(selected_questions)} questions")
+        self.logger.info(f"Started task '{task_id}' with {len(selected_questions)} items") # Updated log message
         
         return self.current_task
+
+    def get_next_item(self, task_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Get the next item (question or alert) for the specified task.
+
+        Args:
+            task_id: The ID of the task.
+
+        Returns:
+            The next item dictionary, or None if no more items or task not found.
+        """
+        if not self.current_task or self.current_task.get('id') != task_id:
+            self.logger.warning(f"get_next_item called for inactive or mismatched task_id: {task_id}")
+            return None
+
+        item_index = self.current_task.get('current_item_index', 0)
+        items = self.current_task.get('items', [])
+
+        if item_index < len(items):
+            item = items[item_index]
+            self.current_task['current_item_index'] = item_index + 1
+            self.logger.debug(f"Returning item {item_index + 1}/{len(items)} for task {task_id}")
+            # Emit progress if needed, though task_widget seems to handle completion
+            # self.task_progress.emit(item_index + 1, len(items))
+            return item
+        else:
+            self.logger.info(f"No more items for task {task_id}. Item index: {item_index}, Total items: {len(items)}")
+            return None
     
     def get_current_task(self) -> Optional[Dict[str, Any]]:
         """
@@ -432,6 +480,78 @@ class TaskSimulator(QObject):
         Returns:
             Current task configuration or None if no task is active
         """
+        return self.current_task
+
+    def start_pressure_task(self, task_type: str, question_set: str, difficulty: str = None, 
+                            num_questions: int = 10, per_question_time_limit: int = 30) -> Dict[str, Any]:
+        """
+        Start a new cognitive task under time pressure for each question.
+
+        Args:
+            task_type: Type of task (e.g., "pressure_quiz")
+            question_set: Name of the question set to use
+            difficulty: Difficulty level (easy, medium, hard)
+            num_questions: Number of questions to include
+            per_question_time_limit: Time limit in seconds for each question
+
+        Returns:
+            Task configuration dictionary
+        """
+        if difficulty is None:
+            difficulty = self.default_difficulty
+
+        task_id = str(uuid.uuid4())
+        self.task_start_time = datetime.now()
+
+        available_questions = self.get_questions_by_difficulty(question_set, difficulty)
+        if len(available_questions) < num_questions:
+            available_questions = self.get_question_set(question_set)
+
+        selected_questions = []
+        if available_questions:
+            selected_questions = random.sample(
+                available_questions,
+                min(num_questions, len(available_questions))
+            )
+        
+        # For pressure tasks, the overall task duration is not fixed at the start
+        # It depends on how quickly the user answers or if questions time out.
+        self.task_end_time = None # Will be set upon completion
+
+        self.current_task = {
+            'id': task_id,
+            'type': task_type,
+            'question_set': question_set,
+            'difficulty': difficulty,
+            'duration': None,  # Overall duration is not pre-set for pressure tasks
+            'per_question_time_limit': per_question_time_limit,
+            'start_time': self.task_start_time,
+            'items': selected_questions, # Added 'items' key
+            'current_item_index': 0,   # Added 'current_item_index' key
+            'end_time': None, # Will be set upon completion
+            'questions': selected_questions,
+            'current_question_index': 0,
+            'answers': [],
+            'metrics': {
+                'correct_answers': 0,
+                'incorrect_answers': 0,
+                'skipped_questions': 0, # Includes timed-out questions
+                'timed_out_questions': 0,
+                'average_response_time': 0,
+                'total_response_time': 0
+            },
+            'is_pressure_task': True,
+            'current_question_remaining_time': per_question_time_limit # Initialize for the first question
+        }
+        self._init_question_timer() # This now also initializes ui_update_timer
+        self.task_started.emit(self.current_task)
+        self.logger.info(f"Started pressure task '{task_id}' with {len(selected_questions)} questions, {per_question_time_limit}s per question.")
+        
+        if selected_questions: # Start timer for the first question
+            self._start_question_timer()
+        else:
+            self.complete_task() # No questions, complete immediately
+            
         return self.current_task
     
     def get_current_question(self) -> Optional[Dict[str, Any]]:
@@ -448,7 +568,12 @@ class TaskSimulator(QObject):
         current_index = self.current_task.get('current_question_index', 0)
         
         if current_index < len(questions):
-            return questions[current_index]
+            question_data = questions[current_index].copy() # Return a copy to avoid modifying original
+            if self.current_task.get('is_pressure_task') and self.question_timer and self.question_timer.isActive():
+                question_data['time_remaining'] = self.question_timer.remainingTime() / 1000.0 # in seconds
+            elif self.current_task.get('is_pressure_task'):
+                 question_data['time_remaining'] = self.current_task.get('per_question_time_limit')
+            return question_data
         
         return None
     
@@ -470,6 +595,9 @@ class TaskSimulator(QObject):
         if not current_question:
             return {'error': 'No current question'}
         
+        if self.current_task.get('is_pressure_task'):
+            self._stop_question_timers()
+
         # Check if the answer is correct
         correct_answer = current_question.get('correct_answer', '')
         is_correct = (answer == correct_answer)
@@ -511,6 +639,8 @@ class TaskSimulator(QObject):
                 self.current_task['current_question_index'],
                 len(self.current_task['questions'])
             )
+            if self.current_task.get('is_pressure_task'):
+                self._start_question_timer() # Start timer for the next question
         
         # Prepare result
         result = {
@@ -536,6 +666,9 @@ class TaskSimulator(QObject):
         current_question = self.get_current_question()
         if not current_question:
             return {'error': 'No current question'}
+
+        if self.current_task.get('is_pressure_task'):
+            self._stop_question_timers()
         
         # Update metrics
         self.current_task['metrics']['skipped_questions'] += 1
@@ -565,6 +698,8 @@ class TaskSimulator(QObject):
                 self.current_task['current_question_index'],
                 len(self.current_task['questions'])
             )
+            if self.current_task.get('is_pressure_task'):
+                self._start_question_timer() # Start timer for the next question
         
         # Prepare result
         result = {
@@ -626,6 +761,11 @@ class TaskSimulator(QObject):
         self.current_task = None
         self.task_start_time = None
         self.task_end_time = None
+        if self.current_task and self.current_task.get('is_pressure_task'):
+            self._stop_question_timers()
+        elif self.question_timer: # For non-pressure tasks, if it was somehow used
+            self.question_timer.stop()
+            # self.question_timer.deleteLater() # QTimer might be re-used, so only stop
         
         return completed_task
     
@@ -678,8 +818,74 @@ class TaskSimulator(QObject):
         self.current_task = None
         self.task_start_time = None
         self.task_end_time = None
-        
+        if self.current_task and self.current_task.get('is_pressure_task'):
+            self._stop_question_timers()
+        elif self.question_timer: # For non-pressure tasks, if it was somehow used
+            self.question_timer.stop()
+            # self.question_timer.deleteLater()
+
         return cancelled_task
+
+    def _start_question_timer(self):
+        """Starts or restarts the timer for the current question in a pressure task."""
+        if not self.current_task or not self.current_task.get('is_pressure_task'):
+            return
+
+        current_question = self.get_current_question() # This will be the *next* question after an answer/skip
+        if not current_question: # No more questions or task ended
+            return
+
+        time_limit_ms = self.current_task.get('per_question_time_limit', 30) * 1000
+        if self.question_timer:
+            self.question_timer.start(time_limit_ms)
+            self.current_task['current_question_remaining_time'] = time_limit_ms // 1000
+            self.question_timer_updated.emit(self.current_task['current_question_remaining_time'])
+            if self.ui_update_timer: # Ensure ui_update_timer is initialized
+                self.ui_update_timer.start(1000) # Emit update every second
+            self.logger.debug(f"Question timer started for question {self.current_task['current_question_index'] + 1}, {time_limit_ms / 1000}s")
+
+    def _handle_question_timeout(self):
+        """Handles the event when a question's time limit expires in a pressure task."""
+        if not self.current_task or not self.current_task.get('is_pressure_task'):
+            return
+
+        timed_out_question = self.get_current_question()
+        if not timed_out_question: # Should not happen if timer was active
+            return
+
+        self.logger.info(f"Question '{timed_out_question.get('id')}' timed out.") 
+        self.current_task['metrics']['timed_out_questions'] += 1
+        # Skipping a question also increments skipped_questions in the original skip_question method
+        # To avoid double counting, we let skip_question handle the 'skipped_questions' metric.
+        
+        # Emit a specific signal for timeout
+        self.question_timeout.emit(timed_out_question)
+
+        # Treat timeout as a skip
+        self.skip_question() # This will advance to the next question or complete the task
+        # Note: skip_question already handles metrics for skipped_questions and answer logging
+
+    def _stop_question_timers(self) -> None:
+        """Stops both the main question timer and the UI update timer."""
+        if self.question_timer and self.question_timer.isActive():
+            self.question_timer.stop()
+        if self.ui_update_timer and self.ui_update_timer.isActive():
+            self.ui_update_timer.stop()
+    
+    def _emit_question_time_update(self) -> None:
+        """Emits the remaining time for the current question or stops if time is up."""
+        if not self.current_task or not self.current_task.get('is_pressure_task') or not self.ui_update_timer or not self.ui_update_timer.isActive():
+            return
+
+        if self.current_task.get('current_question_remaining_time', 0) > 0:
+            self.current_task['current_question_remaining_time'] -= 1
+            self.question_timer_updated.emit(self.current_task['current_question_remaining_time'])
+        else:
+            # This case should ideally be handled by _handle_question_timeout via question_timer,
+            # but as a fallback, stop the UI timer if it's still running at 0.
+            self.ui_update_timer.stop()
+            # Ensure the display shows 0 if it somehow missed the timeout signal handler
+            self.question_timer_updated.emit(0)
     
     def is_task_active(self) -> bool:
         """

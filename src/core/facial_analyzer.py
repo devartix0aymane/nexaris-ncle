@@ -83,11 +83,33 @@ class FacialAnalyzer(QObject):
         if self.enabled:
             self._load_models()
         
+        # Initialize DeepFace (this will download models on first run)
+        self.deepface_available = False # Default to not available
+        try:
+            self.logger.info("Attempting to import DeepFace...")
+            from deepface import DeepFace
+            self.logger.info("DeepFace imported successfully.")
+            
+            self.logger.info("Attempting to perform dummy DeepFace analysis to trigger model download...")
+            # Perform a dummy analysis to trigger model download if needed
+            dummy_frame = np.zeros((100, 100, 3), dtype=np.uint8)
+            DeepFace.analyze(dummy_frame, actions=['emotion'], enforce_detection=False, silent=True)
+            self.logger.info("DeepFace dummy analysis completed.")
+            self.deepface_available = True
+            self.logger.info("DeepFace initialized and models are ready.")
+        except ImportError as ie:
+            self.logger.error(f"Failed to import DeepFace library: {ie}. Emotion detection will be limited.")
+            self.deepface_available = False
+        except Exception as e:
+            self.logger.error(f"Error initializing DeepFace (possibly during model download or dummy analysis): {e}. Emotion detection will be limited.")
+            self.deepface_available = False
+
         self.logger.info("Facial Analyzer initialized")
     
     def _load_models(self) -> None:
         """
-        Load OpenCV models for face detection and emotion recognition
+        Load OpenCV models for face detection and emotion recognition.
+        Includes error handling and logging for model loading failures.
         """
         try:
             # Load face detection model
@@ -115,22 +137,25 @@ class FacialAnalyzer(QObject):
                 self.face_net = None
                 self.logger.warning(f"Could not load DNN face detector: {e}")
             
-            # Try to load emotion recognition model if available
+            # Emotion recognition model (ONNX) is a fallback if DeepFace is not available or fails
             try:
                 emotion_model_path = os.path.join(model_path, 'emotion-ferplus-8.onnx')
                 if os.path.exists(emotion_model_path):
-                    self.emotion_model = cv2.dnn.readNet(emotion_model_path)
-                    self.logger.info("Loaded emotion recognition model")
+                    self.emotion_model_onnx = cv2.dnn.readNet(emotion_model_path)
+                    self.logger.info("Loaded ONNX emotion recognition model (fallback)")
                 else:
-                    self.emotion_model = None
-                    self.logger.info("Emotion recognition model not found")
+                    self.emotion_model_onnx = None
+                    self.logger.info("ONNX emotion recognition model not found")
             except Exception as e:
-                self.emotion_model = None
-                self.logger.warning(f"Could not load emotion recognition model: {e}")
+                self.emotion_model_onnx = None
+                self.logger.warning(f"Could not load ONNX emotion recognition model: {e}")
             
             self.logger.info("OpenCV models loaded successfully")
+        except cv2.error as cv_err:
+            self.logger.error(f"OpenCV specific error loading models: {cv_err}")
+            self.enabled = False
         except Exception as e:
-            self.logger.error(f"Error loading OpenCV models: {e}")
+            self.logger.error(f"General error loading OpenCV models: {e}")
             self.enabled = False
     
     def reset_tracking_data(self) -> None:
@@ -182,8 +207,9 @@ class FacialAnalyzer(QObject):
             True if analysis started successfully, False otherwise
         """
         if not self.enabled:
-            self.logger.warning("Facial analysis is not enabled")
-            return False
+            self.logger.warning("Facial analysis is not enabled (models might have failed to load). Attempting to start will likely fail.")
+            # We can still allow an attempt, start_analysis will handle camera errors
+            # return False # Or, enforce failure here if models are critical path
         
         if self.is_analyzing:
             self.logger.warning("Facial analysis is already active")
@@ -195,15 +221,29 @@ class FacialAnalyzer(QObject):
         # Initialize camera
         try:
             self.cap = cv2.VideoCapture(self.camera_index)
-            if not self.cap.isOpened():
-                self.logger.error(f"Could not open camera at index {self.camera_index}")
+            if not self.cap or not self.cap.isOpened(): # Added check for self.cap itself
+                self.logger.error(f"Could not open camera at index {self.camera_index}. self.cap: {self.cap}")
+                self.cap = None # Ensure cap is None if failed
                 return False
             
             # Set camera properties
-            self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-            self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+            # These can sometimes fail silently or cause issues, wrap them if necessary
+            try:
+                self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+                self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+                self.logger.info(f"Camera {self.camera_index} opened and properties set.")
+            except Exception as e_prop:
+                self.logger.warning(f"Error setting camera properties for {self.camera_index}: {e_prop}. Proceeding with defaults.")
+
+        except cv2.error as cv_err:
+            self.logger.error(f"OpenCV error initializing camera {self.camera_index}: {cv_err}")
+            if self.cap: self.cap.release()
+            self.cap = None
+            return False
         except Exception as e:
-            self.logger.error(f"Error initializing camera: {e}")
+            self.logger.error(f"General error initializing camera {self.camera_index}: {e}")
+            if self.cap: self.cap.release()
+            self.cap = None
             return False
         
         # Set up analysis state
@@ -233,12 +273,26 @@ class FacialAnalyzer(QObject):
         self.is_analyzing = False
         
         # Wait for analysis thread to finish
-        if self.analysis_thread and self.analysis_thread.is_alive():
-            self.analysis_thread.join(timeout=1.0)
+        try:
+            if self.analysis_thread and self.analysis_thread.is_alive():
+                self.analysis_thread.join(timeout=2.0) # Increased timeout slightly
+                if self.analysis_thread.is_alive():
+                    self.logger.warning("Analysis thread did not terminate in time.")
+        except Exception as e_join:
+            self.logger.error(f"Error joining analysis thread: {e_join}")
+        finally:
+            self.analysis_thread = None # Clear thread reference
         
         # Release camera
-        if self.cap and self.cap.isOpened():
-            self.cap.release()
+        try:
+            if self.cap and self.cap.isOpened():
+                self.cap.release()
+                self.logger.info(f"Camera {self.camera_index} released in stop_analysis.")
+        except cv2.error as cv_err:
+            self.logger.error(f"OpenCV error releasing camera {self.camera_index}: {cv_err}")
+        except Exception as e_release:
+            self.logger.error(f"General error releasing camera {self.camera_index}: {e_release}")
+        finally:
             self.cap = None
         
         self.logger.info("Facial analysis stopped")
@@ -251,33 +305,69 @@ class FacialAnalyzer(QObject):
         Background thread for facial analysis
         """
         frame_interval = 1.0 / self.frame_rate
+        self.logger.info("Facial analysis loop started.")
         
-        while self.is_analyzing and self.cap and self.cap.isOpened():
+        while self.is_analyzing:
+            if not self.cap or not self.cap.isOpened():
+                self.logger.error("Camera not available or not open in analysis loop. Stopping analysis.")
+                self.is_analyzing = False # Ensure loop terminates
+                break
+
             loop_start = time.time()
             
-            # Capture frame
-            ret, frame = self.cap.read()
-            if not ret:
-                self.logger.error("Failed to capture frame from camera")
+            try:
+                # Capture frame
+                ret, frame = self.cap.read()
+                if not ret:
+                    self.logger.warning("Failed to capture frame from camera. Retrying or stopping.")
+                    # Optional: implement a retry mechanism or a counter before breaking
+                    time.sleep(0.1) # Brief pause before retrying or exiting loop on next check
+                    continue # Try to read next frame
+            except cv2.error as cv_err_read:
+                self.logger.error(f"OpenCV error reading frame: {cv_err_read}. Stopping analysis.")
+                self.is_analyzing = False
+                break
+            except Exception as e_read:
+                self.logger.error(f"General error reading frame: {e_read}. Stopping analysis.")
+                self.is_analyzing = False
                 break
             
-            # Store current frame
-            self.current_frame = frame.copy()
+            try:
+                # Store current frame
+                self.current_frame = frame.copy()
+                
+                # Process frame
+                self._process_frame(frame) # This should also have internal try-except
+                
+                # Save frame if enabled
+                current_time = time.time()
+                if self.save_frames and (current_time - self.last_save_time) >= self.save_interval:
+                    self._save_frame(frame) # This should also have internal try-except
+                    self.last_save_time = current_time
             
-            # Process frame
-            self._process_frame(frame)
-            
-            # Save frame if enabled
-            current_time = time.time()
-            if self.save_frames and (current_time - self.last_save_time) >= self.save_interval:
-                self._save_frame(frame)
-                self.last_save_time = current_time
-            
+            except Exception as e_process:
+                self.logger.error(f"Error during frame processing or saving: {e_process}")
+                # Decide if this error is critical enough to stop analysis
+                # For now, log and continue to next frame
+
             # Calculate sleep time to maintain frame rate
             processing_time = time.time() - loop_start
             sleep_time = max(0, frame_interval - processing_time)
             if sleep_time > 0:
                 time.sleep(sleep_time)
+            # else: # Optional: log if processing takes longer than frame_interval
+            #     self.logger.debug(f"Frame processing took {processing_time:.4f}s, exceeding interval {frame_interval:.4f}s")
+
+        self.logger.info("Facial analysis loop finished.")
+        # Ensure camera is released if loop exits unexpectedly
+        if self.cap and self.cap.isOpened():
+            try:
+                self.cap.release()
+                self.logger.info(f"Camera {self.camera_index} released at end of analysis loop.")
+            except Exception as e_release_loop_end:
+                self.logger.error(f"Error releasing camera at end of analysis loop: {e_release_loop_end}")
+            finally:
+                self.cap = None
     
     def _process_frame(self, frame: np.ndarray) -> None:
         """
@@ -347,39 +437,41 @@ class FacialAnalyzer(QObject):
             # Extract face region
             face_roi = gray[y:y+h, x:x+w]
             
-            # Analyze emotions if model is available
+            # Analyze emotions using DeepFace if available, otherwise fallback to ONNX model
             emotions = {}
-            if self.emotion_model is not None:
-                emotions = self._analyze_emotions(face_roi)
+            # Extract the BGR face ROI for DeepFace
+            face_roi_bgr = frame[y:y+h, x:x+w]
+
+            emotions = self._analyze_emotions(face_roi_bgr, face_roi) # Pass both BGR and gray ROIs
+            
+            # Get dominant emotion
+            if emotions:
+                self.dominant_emotion = emotions.get('dominant_emotion', 'neutral')
+                self.emotion_confidence = emotions.get('confidence', 0.0)
+                all_emotions = emotions.get('all_emotions', {})
                 
-                # Get dominant emotion
-                if emotions:
-                    self.dominant_emotion, self.emotion_confidence = max(
-                        emotions.items(), key=lambda x: x[1]
-                    )
-                    
-                    # Emit emotion detected signal
-                    self.emotion_detected.emit(
-                        self.dominant_emotion, self.emotion_confidence
-                    )
-                    
-                    # Record emotion detection
-                    self.emotion_detections.append({
-                        'timestamp': timestamp,
-                        'emotions': emotions,
-                        'dominant': self.dominant_emotion,
-                        'confidence': self.emotion_confidence
-                    })
-                    
-                    # Add emotion text to frame
-                    emotion_text = f"{self.dominant_emotion}: {self.emotion_confidence:.2f}"
-                    cv2.putText(
-                        frame, emotion_text, (x, y - 10),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2
-                    )
+                # Emit emotion detected signal
+                self.emotion_detected.emit(
+                    self.dominant_emotion, self.emotion_confidence
+                )
+                
+                # Record emotion detection
+                self.emotion_detections.append({
+                    'timestamp': timestamp,
+                    'emotions': all_emotions,
+                    'dominant': self.dominant_emotion,
+                    'confidence': self.emotion_confidence
+                })
+                
+                # Add emotion text to frame
+                emotion_text = f"{self.dominant_emotion}: {self.emotion_confidence:.2f}"
+                cv2.putText(
+                    frame, emotion_text, (x, y - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2
+                )
             
             # Estimate cognitive load from facial cues
-            cognitive_load = self._estimate_cognitive_load(emotions)
+            cognitive_load = self._estimate_cognitive_load(all_emotions if all_emotions else emotions) # Use all_emotions if available
             self.current_cognitive_load = cognitive_load
             
             # Emit cognitive load update signal
@@ -412,66 +504,102 @@ class FacialAnalyzer(QObject):
             'cognitive_load': self.current_cognitive_load
         })
     
-    def _analyze_emotions(self, face_roi: np.ndarray) -> Dict[str, float]:
+    def _analyze_emotions(self, face_roi_bgr: np.ndarray, face_roi_gray: np.ndarray) -> Dict[str, Any]:
         """
-        Analyze emotions in a face region
+        Analyze emotions in a face region using DeepFace or fallback ONNX model.
         
         Args:
-            face_roi: Face region of interest (grayscale)
+            face_roi_bgr: Face region of interest (BGR format for DeepFace).
+            face_roi_gray: Face region of interest (grayscale for ONNX fallback).
         
         Returns:
-            Dictionary of emotion probabilities
+            Dictionary containing 'dominant_emotion', 'confidence', and 'all_emotions'.
         """
-        try:
-            # Resize face to expected size
-            face = cv2.resize(face_roi, (64, 64))
-            
-            # Normalize and prepare input blob
-            blob = cv2.dnn.blobFromImage(
-                face, 1.0, (64, 64), [0], True, False
-            )
-            
-            # Set input and forward pass
-            self.emotion_model.setInput(blob)
-            output = self.emotion_model.forward()
-            
-            # Convert output to probabilities
-            probabilities = np.exp(output) / np.sum(np.exp(output))
-            
-            # Map to emotion labels (depends on model)
-            # This is for FER+ ONNX model which has 8 emotions
-            emotion_labels = [
-                'neutral', 'happy', 'surprise', 'sad',
-                'anger', 'disgust', 'fear', 'contempt'
-            ]
-            
-            # Create emotion dictionary
-            emotions = {}
-            for i, label in enumerate(emotion_labels):
-                if i < probabilities.shape[1]:
-                    emotions[label] = float(probabilities[0, i])
-            
-            # Add derived emotions based on combinations
-            # Confusion: mix of surprise and sadness/anger
-            if 'surprise' in emotions and ('sad' in emotions or 'anger' in emotions):
-                surprise = emotions['surprise']
-                negative = max(emotions.get('sad', 0), emotions.get('anger', 0))
-                emotions['confusion'] = (surprise + negative) / 2
-            
-            # Frustration: mix of anger and disgust
-            if 'anger' in emotions and 'disgust' in emotions:
-                emotions['frustration'] = (emotions['anger'] + emotions['disgust']) / 2
-            
-            # Concentration: high neutral with low happiness
-            if 'neutral' in emotions and emotions['neutral'] > 0.5:
-                happiness = emotions.get('happy', 0)
-                if happiness < 0.3:
-                    emotions['concentration'] = emotions['neutral'] * (1 - happiness)
-            
-            return emotions
-        except Exception as e:
-            self.logger.error(f"Error analyzing emotions: {e}")
-            return {}
+        if self.deepface_available:
+            try:
+                from deepface import DeepFace
+                # DeepFace expects BGR images
+                analysis_result = DeepFace.analyze(
+                    img_path=face_roi_bgr,
+                    actions=['emotion'],
+                    enforce_detection=False, # Face is already detected
+                    silent=True
+                )
+                
+                # DeepFace returns a list of results if multiple faces are in the image,
+                # but we are passing a single face ROI.
+                if isinstance(analysis_result, list):
+                    analysis_result = analysis_result[0]
+
+                dominant_emotion = analysis_result.get('dominant_emotion', 'neutral')
+                # DeepFace 'emotion' dict contains scores, not probabilities summing to 1.
+                # Confidence here will be the score of the dominant emotion.
+                # We need to normalize these scores to get a confidence value between 0 and 1.
+                emotion_scores = analysis_result.get('emotion', {})
+                total_score = sum(emotion_scores.values())
+                confidence = 0.0
+                if total_score > 0 and dominant_emotion in emotion_scores:
+                     confidence = emotion_scores[dominant_emotion] / total_score * 100 # As percentage
+                
+                # Normalize all emotion scores to be probabilities
+                all_emotions_normalized = {k: (v / total_score if total_score > 0 else 0) for k, v in emotion_scores.items()}
+
+                return {
+                    'dominant_emotion': dominant_emotion,
+                    'confidence': confidence / 100.0, # Convert percentage to 0-1 range
+                    'all_emotions': all_emotions_normalized
+                }
+            except Exception as e:
+                self.logger.error(f"DeepFace emotion analysis failed: {e}. Falling back to ONNX.")
+                # Fall through to ONNX if DeepFace fails
+
+        # Fallback to ONNX model if DeepFace is not available or failed
+        if hasattr(self, 'emotion_model_onnx') and self.emotion_model_onnx is not None:
+            try:
+                face = cv2.resize(face_roi_gray, (64, 64))
+                blob = cv2.dnn.blobFromImage(face, 1.0, (64, 64), [0], True, False)
+                self.emotion_model_onnx.setInput(blob)
+                output = self.emotion_model_onnx.forward()
+                probabilities = np.exp(output) / np.sum(np.exp(output))
+                
+                emotion_labels_onnx = [
+                    'neutral', 'happy', 'surprise', 'sad',
+                    'anger', 'disgust', 'fear', 'contempt'
+                ]
+                
+                emotions_onnx = {}
+                for i, label in enumerate(emotion_labels_onnx):
+                    if i < probabilities.shape[1]:
+                        emotions_onnx[label] = float(probabilities[0, i])
+                
+                dominant_emotion_onnx = 'neutral'
+                confidence_onnx = 0.0
+                if emotions_onnx:
+                    dominant_emotion_onnx, confidence_onnx = max(emotions_onnx.items(), key=lambda x: x[1])
+
+                # Add derived emotions for ONNX model
+                if 'surprise' in emotions_onnx and ('sad' in emotions_onnx or 'anger' in emotions_onnx):
+                    surprise = emotions_onnx['surprise']
+                    negative = max(emotions_onnx.get('sad', 0), emotions_onnx.get('anger', 0))
+                    emotions_onnx['confusion'] = (surprise + negative) / 2
+                if 'anger' in emotions_onnx and 'disgust' in emotions_onnx:
+                    emotions_onnx['frustration'] = (emotions_onnx['anger'] + emotions_onnx['disgust']) / 2
+                if 'neutral' in emotions_onnx and emotions_onnx['neutral'] > 0.5:
+                    happiness = emotions_onnx.get('happy', 0)
+                    if happiness < 0.3:
+                        emotions_onnx['concentration'] = emotions_onnx['neutral'] * (1 - happiness)
+
+                return {
+                    'dominant_emotion': dominant_emotion_onnx,
+                    'confidence': confidence_onnx,
+                    'all_emotions': emotions_onnx
+                }
+            except Exception as e:
+                self.logger.error(f"ONNX emotion analysis failed: {e}")
+                return {'dominant_emotion': 'neutral', 'confidence': 0.0, 'all_emotions': {}}
+        
+        self.logger.warning("No emotion model available for analysis.")
+        return {'dominant_emotion': 'neutral', 'confidence': 0.0, 'all_emotions': {}}
     
     def _estimate_cognitive_load(self, emotions: Dict[str, float]) -> float:
         """

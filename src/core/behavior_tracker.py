@@ -14,6 +14,8 @@ import threading
 import numpy as np
 from datetime import datetime
 from typing import Dict, List, Any, Optional, Tuple, Callable
+import csv
+import os
 
 # PyQt imports for event handling
 from PyQt5.QtCore import QObject, pyqtSignal, QPoint, Qt, QEvent
@@ -58,6 +60,13 @@ class BehaviorTracker(QObject):
         self.tracking_thread = None
         self.last_activity_time = None
         self.hesitation_threshold = 2.0  # seconds
+        self.idle_time_threshold = 5.0 # seconds for idle time
+
+        # CSV logging setup
+        self.csv_writer = None
+        self.csv_file = None
+        self.csv_file_path = os.path.join(self.config.get('data_dir', 'data'), 'behavior_log.csv')
+        os.makedirs(os.path.dirname(self.csv_file_path), exist_ok=True)
         
         # Callbacks
         self.data_callbacks = []
@@ -80,9 +89,12 @@ class BehaviorTracker(QObject):
         self.keypress_count = 0
         self.hesitation_count = 0
         self.total_hesitation_time = 0.0
+        self.total_idle_time = 0.0
+        self.last_click_time = None
         
         # Last known position
         self.last_mouse_pos = None
+        self.last_mouse_time = None
     
     def register_data_callback(self, callback: Callable[[Dict[str, Any]], None]) -> None:
         """
@@ -131,6 +143,19 @@ class BehaviorTracker(QObject):
         self.tracking_thread = threading.Thread(target=self._tracking_loop)
         self.tracking_thread.daemon = True
         self.tracking_thread.start()
+
+        # Initialize CSV logging
+        try:
+            self.csv_file = open(self.csv_file_path, 'w', newline='')
+            self.csv_writer = csv.writer(self.csv_file)
+            # Write header
+            self.csv_writer.writerow([
+                'timestamp', 'event_type', 'x', 'y', 'button', 'key_code',
+                'duration', 'mouse_speed', 'click_delay', 'idle_time'
+            ])
+        except IOError as e:
+            self.logger.error(f"Failed to open CSV file for writing: {e}")
+            self.csv_writer = None # Ensure writer is None if file opening failed
         
         self.logger.info("Behavior tracking started")
     
@@ -156,6 +181,16 @@ class BehaviorTracker(QObject):
         # Wait for tracking thread to finish
         if self.tracking_thread and self.tracking_thread.is_alive():
             self.tracking_thread.join(timeout=1.0)
+
+        # Close CSV file
+        if self.csv_file:
+            try:
+                self.csv_file.close()
+                self.logger.info(f"Behavior log saved to {self.csv_file_path}")
+            except IOError as e:
+                self.logger.error(f"Failed to close CSV file: {e}")
+            self.csv_file = None
+            self.csv_writer = None
         
         self.logger.info("Behavior tracking stopped")
         
@@ -167,29 +202,63 @@ class BehaviorTracker(QObject):
         Background thread for periodic behavior checks
         """
         while self.is_tracking:
+            current_time = time.time()
             # Check for hesitation (inactivity)
-            self._check_hesitation()
+            self._check_hesitation(current_time)
+            # Check for idle time
+            self._check_idle_time(current_time)
             
             # Sleep according to sampling rate
             time.sleep(1.0 / self.sampling_rate)
     
-    def _check_hesitation(self) -> None:
+    def _check_hesitation(self, current_time: float) -> None:
         """
-        Check for user hesitation (inactivity)
+        Check for user hesitation (inactivity between specific actions like clicks or key presses)
+        Args:
+            current_time: The current time from the tracking loop.
         """
         if not self.last_activity_time:
             return
         
-        current_time = time.time()
         inactive_time = current_time - self.last_activity_time
         
         # If inactive for longer than threshold, record hesitation
+        # This is a general inactivity check, might be refined based on task context
         if inactive_time > self.hesitation_threshold:
-            self.hesitation_detected.emit(inactive_time)
-            self._handle_hesitation(inactive_time)
+            # We only log hesitation if it's not already part of a longer idle period
+            if inactive_time < self.idle_time_threshold:
+                self.hesitation_detected.emit(inactive_time)
+                self._handle_hesitation(inactive_time, current_time)
             
-            # Reset last activity time to avoid multiple hesitation events
-            self.last_activity_time = current_time
+            # Reset last activity time to avoid multiple hesitation events for the same period
+            # but only if it's not a longer idle period, which is handled by _check_idle_time
+            if inactive_time < self.idle_time_threshold:
+                 self.last_activity_time = current_time
+
+    def _check_idle_time(self, current_time: float) -> None:
+        """
+        Check for user idle time (longer periods of inactivity).
+        Args:
+            current_time: The current time from the tracking loop.
+        """
+        if not self.last_activity_time:
+            return
+
+        idle_duration = current_time - self.last_activity_time
+        if idle_duration > self.idle_time_threshold:
+            self.total_idle_time += (1.0 / self.sampling_rate) # Add the sampling interval to idle time
+            # Log idle event to CSV if needed, or just accumulate total_idle_time
+            if self.csv_writer:
+                try:
+                    self.csv_writer.writerow([
+                        datetime.now().isoformat(), 'idle', '', '', '', '',
+                        round(1.0 / self.sampling_rate, 3), '', '', round(idle_duration, 3)
+                    ])
+                except Exception as e:
+                    self.logger.error(f"Error writing idle event to CSV: {e}")
+            # No specific signal for continuous idle, but could be added if needed
+            # self.last_activity_time is NOT reset here, so idle_duration continues to grow
+            # until an activity occurs.
     
     def _handle_mouse_move(self, pos: QPoint) -> None:
         """
@@ -201,28 +270,44 @@ class BehaviorTracker(QObject):
         if not self.is_tracking or not self.mouse_tracking:
             return
         
-        # Record timestamp
+        current_event_time = time.time()
         timestamp = datetime.now().isoformat()
-        self.last_activity_time = time.time()
+        self.last_activity_time = current_event_time
         
-        # Calculate distance if we have a previous position
-        if self.last_mouse_pos is not None:
+        mouse_speed = 0.0
+        # Calculate distance and speed if we have a previous position and time
+        if self.last_mouse_pos is not None and self.last_mouse_time is not None:
             dx = pos.x() - self.last_mouse_pos.x()
             dy = pos.y() - self.last_mouse_pos.y()
             distance = np.sqrt(dx*dx + dy*dy)
             self.total_mouse_distance += distance
+            time_delta = current_event_time - self.last_mouse_time
+            if time_delta > 0:
+                mouse_speed = distance / time_delta # pixels per second
         
-        # Update last position
+        # Update last position and time
         self.last_mouse_pos = pos
+        self.last_mouse_time = current_event_time
         
         # Record data if enabled
         if self.save_raw_data:
             self.mouse_positions.append({
                 'timestamp': timestamp,
                 'x': pos.x(),
-                'y': pos.y()
+                'y': pos.y(),
+                'speed': mouse_speed
             })
         
+        # Log to CSV
+        if self.csv_writer:
+            try:
+                self.csv_writer.writerow([
+                    timestamp, 'mouse_move', pos.x(), pos.y(), '', '',
+                    '', round(mouse_speed, 2), '', ''
+                ])
+            except Exception as e:
+                self.logger.error(f"Error writing mouse_move to CSV: {e}")
+
         # Record activity timestamp
         self.activity_timestamps.append(timestamp)
         
@@ -231,6 +316,7 @@ class BehaviorTracker(QObject):
             'data_type': 'mouse_move',
             'timestamp': timestamp,
             'position': {'x': pos.x(), 'y': pos.y()},
+            'speed': mouse_speed,
             'total_distance': self.total_mouse_distance
         })
     
@@ -245,10 +331,15 @@ class BehaviorTracker(QObject):
         if not self.is_tracking or not self.mouse_tracking:
             return
         
-        # Record timestamp
+        current_event_time = time.time()
         timestamp = datetime.now().isoformat()
-        self.last_activity_time = time.time()
+        self.last_activity_time = current_event_time
         
+        click_delay = 0.0
+        if self.last_click_time is not None:
+            click_delay = current_event_time - self.last_click_time
+        self.last_click_time = current_event_time
+
         # Update metrics
         self.click_count += 1
         
@@ -258,9 +349,20 @@ class BehaviorTracker(QObject):
                 'timestamp': timestamp,
                 'x': pos.x(),
                 'y': pos.y(),
-                'button': button
+                'button': button,
+                'delay_from_last_click': click_delay
             })
         
+        # Log to CSV
+        if self.csv_writer:
+            try:
+                self.csv_writer.writerow([
+                    timestamp, 'mouse_click', pos.x(), pos.y(), button, '',
+                    '', '', round(click_delay, 3), ''
+                ])
+            except Exception as e:
+                self.logger.error(f"Error writing mouse_click to CSV: {e}")
+
         # Record activity timestamp
         self.activity_timestamps.append(timestamp)
         
@@ -270,6 +372,7 @@ class BehaviorTracker(QObject):
             'timestamp': timestamp,
             'position': {'x': pos.x(), 'y': pos.y()},
             'button': button,
+            'click_delay': click_delay,
             'click_count': self.click_count
         })
     
@@ -283,9 +386,9 @@ class BehaviorTracker(QObject):
         if not self.is_tracking or not self.keyboard_tracking:
             return
         
-        # Record timestamp
+        current_event_time = time.time()
         timestamp = datetime.now().isoformat()
-        self.last_activity_time = time.time()
+        self.last_activity_time = current_event_time
         
         # Update metrics
         self.keypress_count += 1
@@ -297,6 +400,16 @@ class BehaviorTracker(QObject):
                 'key_code': key_code
             })
         
+        # Log to CSV
+        if self.csv_writer:
+            try:
+                self.csv_writer.writerow([
+                    timestamp, 'key_press', '', '', '', key_code,
+                    '', '', '', ''
+                ])
+            except Exception as e:
+                self.logger.error(f"Error writing key_press to CSV: {e}")
+
         # Record activity timestamp
         self.activity_timestamps.append(timestamp)
         
@@ -308,18 +421,20 @@ class BehaviorTracker(QObject):
             'keypress_count': self.keypress_count
         })
     
-    def _handle_hesitation(self, duration: float) -> None:
+    def _handle_hesitation(self, duration: float, event_time: float) -> None:
         """
         Handle detected hesitation
         
         Args:
             duration: Hesitation duration in seconds
+            event_time: The time the hesitation was detected by the loop
         """
         if not self.is_tracking:
             return
         
-        # Record timestamp
-        timestamp = datetime.now().isoformat()
+        # Record timestamp (use event_time for more accuracy with the loop)
+        timestamp = datetime.fromtimestamp(event_time).isoformat()
+        # self.last_activity_time is updated by _check_hesitation if this is not an idle period
         
         # Update metrics
         self.hesitation_count += 1
@@ -332,6 +447,16 @@ class BehaviorTracker(QObject):
                 'duration': duration
             })
         
+        # Log to CSV
+        if self.csv_writer:
+            try:
+                self.csv_writer.writerow([
+                    timestamp, 'hesitation', '', '', '', '',
+                    round(duration, 3), '', '', ''
+                ])
+            except Exception as e:
+                self.logger.error(f"Error writing hesitation to CSV: {e}")
+
         # Notify callbacks
         self._notify_data_callbacks({
             'data_type': 'hesitation',
@@ -356,7 +481,8 @@ class BehaviorTracker(QObject):
             'keypress_count': self.keypress_count,
             'hesitation_count': self.hesitation_count,
             'total_hesitation_time': self.total_hesitation_time,
-            'avg_hesitation_time': self.total_hesitation_time / max(1, self.hesitation_count)
+            'avg_hesitation_time': self.total_hesitation_time / max(1, self.hesitation_count),
+            'total_idle_time': self.total_idle_time
         }
         
         # Calculate click rate (clicks per minute)

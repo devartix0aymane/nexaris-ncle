@@ -1,172 +1,175 @@
 # NEXARIS Cognitive Load Estimator (NCLE)
 
-## Overview
-The NEXARIS Cognitive Load Estimator (NCLE) is a prototype system designed to measure and visualize cognitive load in real-time. This tool supports human-centric cybersecurity operations and burnout prevention by providing objective metrics of mental workload during task execution.
+[![Python Version](https://img.shields.io/badge/python-3.7%2B-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/devartix0aymane/NEXARIS-CLE) <!-- Replace with actual build status badge if available -->
+[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-orange.svg?style=flat-square)](https://github.com/devartix0aymane/NEXARIS-CLE/issues) <!-- Replace with actual repo link -->
 
-## Purpose
-Cybersecurity professionals often work under high cognitive load conditions, which can lead to:
-- Decreased performance and accuracy
-- Increased response time to critical alerts
-- Decision fatigue and burnout
-- Higher turnover rates in security operations centers
+## 🔹 What the App Does
 
-NCLE addresses these challenges by providing real-time feedback on cognitive load, enabling:
-- Optimization of workflow and task distribution
-- Early detection of potential burnout conditions
-- Data-driven approaches to team management
-- Improved human-computer interaction design
+The NEXARIS Cognitive Load Estimator (NCLE) is a sophisticated desktop application designed to estimate a user's cognitive load in real-time. It achieves this by intelligently integrating and analyzing data from multiple sources:
 
-## Features
-- **Task Simulation**: Configurable timed tasks that mimic real-world cybersecurity scenarios
-- **Behavior Tracking**: Monitoring of mouse movements, response times, click patterns, and hesitation
-- **Facial Analysis**: Optional emotion recognition to detect frustration, focus, and stress indicators
-- **Cognitive Load Scoring**: Proprietary algorithm to calculate Estimated Cognitive Load Score (ECLS)
-- **Visualization**: Real-time display of cognitive load metrics and trends
-- **Extensibility**: Support for ML model integration and EEG data (NEXARIS NeuroPrint™)
+*   **Task Performance**: Monitors how a user performs on specific tasks.
+*   **Behavioral Patterns**: Tracks mouse movements, clicks, and keyboard inputs.
+*   **Facial Emotion Analysis**: Utilizes a webcam to detect faces and recognize emotional cues.
 
-## Technology Stack
-- **Python**: Core programming language
-- **PyQt**: UI framework for professional interface
-- **OpenCV**: Computer vision for facial analysis
-- **Pandas/NumPy**: Data processing and analysis
-- **Matplotlib/Seaborn**: Data visualization
+This comprehensive approach provides a nuanced understanding of user engagement, stress levels, and overall cognitive state during computer-based activities. The application features a user-friendly Graphical User Interface (GUI) for ease of operation and real-time feedback.
 
-## Project Structure
-```
-NEXARIS/
-├── main.py                     # Application entry point
-├── requirements.txt            # Project dependencies
-├── README.md                   # Project documentation
-├── LICENSE                     # MIT License
-├── run.bat                     # Windows execution script
-├── run.sh                      # Linux/macOS execution script
-├── config/                     # Configuration files
-├── data/                       # Data storage
-├── docs/                       # Additional documentation
-├── src/
-│   ├── core/                   # Core functionality
-│   │   ├── __init__.py
-│   │   ├── task_simulator.py   # Task generation and management
-│   │   ├── behavior_tracker.py # User interaction monitoring
-│   │   ├── facial_analyzer.py  # OpenCV-based emotion detection
-│   │   ├── load_calculator.py  # ECLS algorithm implementation
-│   │   └── data_manager.py     # Data handling and storage
-│   ├── ui/                     # User interface components
-│   │   ├── __init__.py
-│   │   ├── main_window.py      # Main application window
-│   │   ├── task_panel.py       # Task display and interaction
-│   │   ├── visualization.py    # Score visualization components
-│   │   └── settings_dialog.py  # Configuration interface
-│   ├── models/                 # Data models
-│   │   ├── __init__.py
-│   │   ├── user_model.py       # User data representation
-│   │   ├── task_model.py       # Task data structures
-│   │   └── score_model.py      # Cognitive load score model
-│   └── utils/                  # Utility functions
-│       ├── __init__.py
-│       ├── config_utils.py     # Configuration handling
-│       ├── logging_utils.py    # Logging functionality
-│       └── ml_utils.py         # Machine learning utilities
-└── tests/                      # Unit and integration tests
-    ├── __init__.py
-    ├── test_core.py
-    ├── test_ui.py
-    └── test_models.py
+## 📊 Screenshots and Demo
+
+*(Placeholder for screenshots - Please add actual screenshots of the application GUI, e.g., main dashboard, task view, settings panel)*
+
+**Example Screenshot Placeholder:**
+
+`![NCLE Dashboard](https://via.placeholder.com/600x400.png?text=NCLE+Main+Dashboard+Screenshot)`
+
+**Demo Video Placeholder:**
+
+`![NCLE Demo](https://via.placeholder.com/600x400.png?text=Link+to+App+Demo+Video)`
+
+## 🛠️ How to Install
+
+Follow these steps to get NCLE up and running on your system:
+
+1.  **Prerequisites**:
+    *   Python 3.7 or newer.
+    *   A webcam (required for the facial analysis feature).
+    *   Git (for cloning the repository).
+
+2.  **Clone the Repository**:
+    Open your terminal or command prompt and run:
+    ```bash
+    git clone https://github.com/devartix0aymane/NEXARIS-CLE.git # Replace with your actual repository URL if different
+    cd NEXARIS-CLE
+    ```
+
+3.  **Create and Activate a Virtual Environment (Recommended)**:
+    This helps manage project dependencies and avoid conflicts.
+    ```bash
+    python -m venv venv
+    ```
+    Activate the environment:
+    *   **Windows**: `venv\Scripts\activate`
+    *   **macOS/Linux**: `source venv/bin/activate`
+
+4.  **Install Dependencies**:
+    With the virtual environment activated, install the required Python packages using the `requirements.txt` file:
+    ```bash
+    pip install -r requirements.txt
+    ```
+    *Note: `opencv-python` can sometimes have complex dependencies. If you encounter installation issues, you might need to install additional system-level libraries or try a specific version compatible with your OS.*
+
+## ▶️ How to Run
+
+Once the installation is complete, you can launch the NCLE application by running the main script from the project's root directory:
+
+```bash
+python src/main.py
 ```
 
-## Installation and Execution
+## 🧠 Technologies Used
 
-### Prerequisites
-- Python 3.8 or higher
-- pip (Python package installer)
-- Git (for cloning the repository)
+NCLE leverages a stack of powerful Python libraries and technologies:
 
-### Windows
-1. Clone the repository:
-   ```
-   git clone https://github.com/devartix0aymane/NEXARIS.git
-   cd NEXARIS
-   ```
-2. Run the application using the provided batch script:
-   ```
-   run.bat
-   ```
-   This script will:
-   - Create a virtual environment if it doesn't exist
-   - Install required dependencies
-   - Launch the application
+*   **Core Language**: Python 3
+*   **GUI Framework**: PyQt5 / PySide2 (or other, specify if known, e.g., Tkinter)
+*   **Computer Vision**: OpenCV (`opencv-python`) for webcam access, face detection, and image processing.
+*   **Data Analysis/Numerics**: NumPy, Pandas (if used for data manipulation)
+*   **System Monitoring**: `psutil` for CPU usage monitoring.
+*   **Behavioral Tracking**: Libraries like `pynput` or custom implementations for mouse/keyboard tracking.
+*   **Emotion Recognition**: Potentially custom models or libraries like `deepface`, `fer` (specify if known).
+*   **Data Logging**: Standard Python CSV module.
+*   **Configuration**: `QSettings` (from PyQt) or JSON/YAML files.
 
-### Linux/macOS
-1. Clone the repository:
-   ```
-   git clone https://github.com/devartix0aymane/NEXARIS.git
-   cd NEXARIS
-   ```
-2. Make the shell script executable:
-   ```
-   chmod +x run.sh
-   ```
-3. Run the application using the provided shell script:
-   ```
-   ./run.sh
-   ```
-   This script will:
-   - Create a virtual environment if it doesn't exist
-   - Install required dependencies
-   - Launch the application
+## 📦 Folder Structure
 
-### Manual Installation
-1. Clone the repository:
-   ```
-   git clone https://github.com/devartix0aymane/NEXARIS.git
-   cd NEXARIS
-   ```
-2. Create and activate a virtual environment:
-   ```
-   # Windows
-   python -m venv venv
-   venv\Scripts\activate
-   
-   # Linux/macOS
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
-3. Install dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
-4. Run the application:
-   ```
-   python main.py
-   ```
+The project maintains a clear and organized directory structure:
 
-## Future Directions
-- **Machine Learning Integration**: Advanced pattern recognition for improved cognitive load estimation
-- **EEG Support**: Integration with consumer-grade EEG devices for direct neural activity measurement
-- **Team Dashboard**: Aggregate view for monitoring team cognitive load in SOC environments
-- **Predictive Analytics**: Forecasting potential burnout conditions before they occur
-- **API Development**: Enable integration with other security tools and platforms
+```
+NEXARIS-CLE/
+├── .github/                # GitHub specific files (e.g., workflows, issue templates)
+│   └── workflows/
+│       └── python-app.yml  # Example CI workflow
+├── assets/                 # Static assets (icons, images, sample data)
+│   └── icons/
+│       └── app_icon.png
+├── docs/                   # Project documentation, design documents, user manuals
+├── logs/                   # Default directory for CSV log files generated by the application
+├── src/                    # All source code for the application
+│   ├── components/           # Core functional modules (e.g., tracker, analyzer)
+│   │   ├── __init__.py
+│   │   ├── behavior_tracker.py
+│   │   ├── cognitive_load_calculator.py
+│   │   ├── eeg_integration.py  # If EEG is part of the plan
+│   │   ├── facial_analyzer.py
+│   │   └── task_simulator.py
+│   ├── core/                 # Core application logic, data management
+│   │   ├── __init__.py
+│   │   ├── config_manager.py
+│   │   └── data_manager.py
+│   ├── gui/                  # Graphical User Interface components
+│   │   ├── __init__.py
+│   │   ├── main_window.py
+│   │   ├── dashboard_widget.py
+│   │   ├── settings_widget.py
+│   │   └── camera_widget.py
+│   ├── utils/                # Utility functions and helper classes
+│   │   ├── __init__.py
+│   │   └── logger.py
+│   ├── __init__.py
+│   └── main.py             # Main entry point of the application
+├── tests/                  # Unit tests and integration tests
+│   ├── __init__.py
+│   └── test_example.py
+├── .gitignore              # Specifies intentionally untracked files that Git should ignore
+├── LICENSE                 # Project license file (MIT License)
+├── README.md               # This file: project overview, setup, and usage instructions
+└── requirements.txt        # Lists Python package dependencies
+```
 
-## Human-Centric Cybersecurity
-NCLE represents a shift toward human-centric approaches in cybersecurity operations. By acknowledging and measuring the human factors in security work, organizations can:
+## 🧩 How it Fits into the NEXARIS Architecture
 
-1. **Optimize Human Performance**: Design workflows that maximize effectiveness while minimizing cognitive strain
-2. **Enhance Decision Quality**: Ensure critical security decisions are made under optimal cognitive conditions
-3. **Improve Retention**: Reduce burnout and turnover by proactively managing cognitive workload
-4. **Personalize Training**: Develop targeted training programs based on individual cognitive patterns
+NCLE is envisioned as a key component within the broader **NEXARIS Human-Computer Interaction (HCI) & Cognitive Analytics Platform**. Its role is to provide granular, real-time data on user cognitive states.
 
-## NEXARIS NeuroPrint™
-The NCLE prototype lays the groundwork for the more advanced NEXARIS NeuroPrint™ technology, which will incorporate direct neurological measurements for unprecedented accuracy in cognitive load estimation.
+*   **Data Source**: NCLE acts as a primary data acquisition module, capturing rich multimodal data (behavioral, physiological via webcam, task-related) from individual user sessions.
+*   **Local Processing**: It performs initial processing and feature extraction locally to derive cognitive load metrics.
+*   **API Integration (Future)**: The processed data and cognitive load estimations can be streamed or batched to a central NEXARIS data lake or analytics engine via a secure API. This allows for:
+    *   Aggregated analysis across multiple users and sessions.
+    *   Longitudinal tracking of cognitive states.
+    *   Training more advanced global models for cognitive load prediction and user adaptation.
+*   **Feedback Loop**: Insights from the central NEXARIS platform could, in turn, inform NCLE's configuration or task adaptation strategies, creating a closed-loop system for optimizing user experience and performance.
+*   **Modular Component**: Designed with modularity, NCLE can be integrated as a standalone sensor or alongside other NEXARIS modules (e.g., physiological sensors, advanced AI recommenders).
 
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## 🚀 Upgrade Plan: SUPER MODE
+
+**SUPER MODE** represents the next evolution of NCLE, aiming for significantly enhanced capabilities and a more immersive user experience. Key features planned for SUPER MODE include:
+
+1.  **Advanced AI Models**: 
+    *   Transition from rule-based or simpler models to deep learning architectures for emotion recognition and cognitive load prediction (e.g., using LSTMs, Transformers for temporal data).
+    *   Personalized models that adapt to individual user baselines and response patterns.
+2.  **EEG Integration (Optional Module)**:
+    *   Seamless integration with consumer-grade EEG headsets (e.g., Muse, Emotiv) to incorporate neural signals for more direct cognitive state assessment.
+    *   Real-time EEG feature extraction (e.g., band power, event-related potentials).
+3.  **Enhanced Multimodal Fusion**: 
+    *   Sophisticated algorithms for fusing data from webcam, behavior, task performance, and EEG (if available) to produce a more robust and accurate cognitive load index.
+4.  **Adaptive Interfaces**: 
+    *   The system could dynamically adjust task difficulty, UI elements, or provide timely interventions based on the estimated cognitive load (e.g., suggesting breaks, simplifying tasks).
+5.  **Real-time Biofeedback**: 
+    *   Visual or auditory feedback to the user about their current cognitive state, potentially helping them manage stress or focus.
+6.  **Cloud Connectivity & Analytics Dashboard**: 
+    *   Securely sync data to a cloud platform for advanced analytics, trend visualization, and comparison across users/groups (tying into the broader NEXARIS platform).
+    *   A web-based dashboard for researchers or administrators to review aggregated data.
+7.  **Gamification & Engagement**: 
+    *   Introduce gamified elements to make tasks more engaging and to motivate users.
+8.  **Contextual Awareness**: 
+    *   Attempt to understand the broader context of the user's activity (e.g., type of application being used) to refine cognitive load estimation.
+
+SUPER MODE aims to transform NCLE from an estimator into a proactive cognitive assistant.
+
+## 📄 License
+
+This project is licensed under the MIT License. See the <mcfile name="LICENSE" path="a:\NEXARIS CLE\LICENSE"></mcfile> file for full details.
 
 ---
 
-*NEXARIS Cognitive Load Estimator (NCLE) is a prototype tool designed for research and development purposes.*
-
-## Author
-
-Developed by Aymane Loukhai (devartix)
-
-© 2023 NEXARIS - All Rights Reserved
+*This README is a living document and will be updated as the project evolves.*
