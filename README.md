@@ -115,56 +115,104 @@ NEXARIS-CLE/
 │   │   └── camera_widget.py
 │   ├── utils/                # Utility functions and helper classes
 │   │   ├── __init__.py
-│   │   └── logger.py
-│   ├── __init__.py
-│   └── main.py             # Main entry point of the application
-├── tests/                  # Unit tests and integration tests
-│   ├── __init__.py
-│   └── test_example.py
-├── .gitignore              # Specifies intentionally untracked files that Git should ignore
-├── LICENSE                 # Project license file (MIT License)
-├── README.md               # This file: project overview, setup, and usage instructions
-└── requirements.txt        # Lists Python package dependencies
+│   │   ├── user_model.py       # User data representation
+│   │   ├── task_model.py       # Task data structures
+│   │   └── score_model.py      # Cognitive load score model
+│   └── utils/                  # Utility functions
+│       ├── __init__.py
+│       ├── config_utils.py     # Configuration handling
+│       ├── logging_utils.py    # Logging functionality
+│       └── ml_utils.py         # Machine learning utilities
+└── tests/                      # Unit and integration tests
+    ├── __init__.py
+    ├── test_core.py
+    ├── test_ui.py
+    └── test_models.py
 ```
 
-## 🧩 How it Fits into the NEXARIS Architecture
+## Installation and Execution
 
-NCLE is envisioned as a key component within the broader **NEXARIS Human-Computer Interaction (HCI) & Cognitive Analytics Platform**. Its role is to provide granular, real-time data on user cognitive states.
+### Prerequisites
+- Python 3.8 or higher
+- pip (Python package installer)
+- Git (for cloning the repository)
 
-*   **Data Source**: NCLE acts as a primary data acquisition module, capturing rich multimodal data (behavioral, physiological via webcam, task-related) from individual user sessions.
-*   **Local Processing**: It performs initial processing and feature extraction locally to derive cognitive load metrics.
-*   **API Integration (Future)**: The processed data and cognitive load estimations can be streamed or batched to a central NEXARIS data lake or analytics engine via a secure API. This allows for:
-    *   Aggregated analysis across multiple users and sessions.
-    *   Longitudinal tracking of cognitive states.
-    *   Training more advanced global models for cognitive load prediction and user adaptation.
-*   **Feedback Loop**: Insights from the central NEXARIS platform could, in turn, inform NCLE's configuration or task adaptation strategies, creating a closed-loop system for optimizing user experience and performance.
-*   **Modular Component**: Designed with modularity, NCLE can be integrated as a standalone sensor or alongside other NEXARIS modules (e.g., physiological sensors, advanced AI recommenders).
+### Windows
+1. Clone the repository:
+   ```
+   git clone https://github.com/devartix0aymane/NEXARIS.git
+   cd NEXARIS
+   ```
+2. Run the application using the provided batch script:
+   ```
+   run.bat
+   ```
+   This script will:
+   - Create a virtual environment if it doesn't exist
+   - Install required dependencies
+   - Launch the application
 
-## 🚀 Upgrade Plan: SUPER MODE
+### Linux/macOS
+1. Clone the repository:
+   ```
+   git clone https://github.com/devartix0aymane/NEXARIS.git
+   cd NEXARIS
+   ```
+2. Make the shell script executable:
+   ```
+   chmod +x run.sh
+   ```
+3. Run the application using the provided shell script:
+   ```
+   ./run.sh
+   ```
+   This script will:
+   - Create a virtual environment if it doesn't exist
+   - Install required dependencies
+   - Launch the application
 
-**SUPER MODE** represents the next evolution of NCLE, aiming for significantly enhanced capabilities and a more immersive user experience. Key features planned for SUPER MODE include:
+### Manual Installation
+1. Clone the repository:
+   ```
+   git clone https://github.com/devartix0aymane/NEXARIS.git
+   cd NEXARIS
+   ```
+2. Create and activate a virtual environment:
+   ```
+   # Windows
+   python -m venv venv
+   venv\Scripts\activate
+   
+   # Linux/macOS
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+3. Install dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
+4. Run the application:
+   ```
+   python main.py
+   ```
 
-1.  **Advanced AI Models**: 
-    *   Transition from rule-based or simpler models to deep learning architectures for emotion recognition and cognitive load prediction (e.g., using LSTMs, Transformers for temporal data).
-    *   Personalized models that adapt to individual user baselines and response patterns.
-2.  **EEG Integration (Optional Module)**:
-    *   Seamless integration with consumer-grade EEG headsets (e.g., Muse, Emotiv) to incorporate neural signals for more direct cognitive state assessment.
-    *   Real-time EEG feature extraction (e.g., band power, event-related potentials).
-3.  **Enhanced Multimodal Fusion**: 
-    *   Sophisticated algorithms for fusing data from webcam, behavior, task performance, and EEG (if available) to produce a more robust and accurate cognitive load index.
-4.  **Adaptive Interfaces**: 
-    *   The system could dynamically adjust task difficulty, UI elements, or provide timely interventions based on the estimated cognitive load (e.g., suggesting breaks, simplifying tasks).
-5.  **Real-time Biofeedback**: 
-    *   Visual or auditory feedback to the user about their current cognitive state, potentially helping them manage stress or focus.
-6.  **Cloud Connectivity & Analytics Dashboard**: 
-    *   Securely sync data to a cloud platform for advanced analytics, trend visualization, and comparison across users/groups (tying into the broader NEXARIS platform).
-    *   A web-based dashboard for researchers or administrators to review aggregated data.
-7.  **Gamification & Engagement**: 
-    *   Introduce gamified elements to make tasks more engaging and to motivate users.
-8.  **Contextual Awareness**: 
-    *   Attempt to understand the broader context of the user's activity (e.g., type of application being used) to refine cognitive load estimation.
+## Future Directions
+- **Machine Learning Integration**: Advanced pattern recognition for improved cognitive load estimation
+- **EEG Support**: Integration with consumer-grade EEG devices for direct neural activity measurement
+- **Team Dashboard**: Aggregate view for monitoring team cognitive load in SOC environments
+- **Predictive Analytics**: Forecasting potential burnout conditions before they occur
+- **API Development**: Enable integration with other security tools and platforms
 
-SUPER MODE aims to transform NCLE from an estimator into a proactive cognitive assistant.
+## Human-Centric Cybersecurity
+NCLE represents a shift toward human-centric approaches in cybersecurity operations. By acknowledging and measuring the human factors in security work, organizations can:
+
+1. **Optimize Human Performance**: Design workflows that maximize effectiveness while minimizing cognitive strain
+2. **Enhance Decision Quality**: Ensure critical security decisions are made under optimal cognitive conditions
+3. **Improve Retention**: Reduce burnout and turnover by proactively managing cognitive workload
+4. **Personalize Training**: Develop targeted training programs based on individual cognitive patterns
+
+## NEXARIS NeuroPrint™
+The NCLE prototype lays the groundwork for the more advanced NEXARIS NeuroPrint™ technology, which will incorporate direct neurological measurements for unprecedented accuracy in cognitive load estimation.
 
 ## 📄 License
 
@@ -172,4 +220,10 @@ This project is licensed under the MIT License. See the <mcfile name="LICENSE" p
 
 ---
 
-*This README is a living document and will be updated as the project evolves.*
+*NEXARIS Cognitive Load Estimator (NCLE) is a prototype tool designed for research and development purposes.*
+
+## Author
+
+Developed by Aymane Loukhai (devartix)
+
+© 2023 NEXARIS - All Rights Reserved
